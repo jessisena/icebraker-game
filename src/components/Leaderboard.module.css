@@ -1,0 +1,86 @@
+.screen {
+  width: 100%;
+  text-align: center;
+  padding: var(--space-4);
+}
+
+.title {
+  font-size: var(--text-3xl);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: var(--space-6);
+}
+
+.board {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  max-width: var(--content-narrow);
+  margin: 0 auto var(--space-6);
+  box-shadow: var(--shadow-lg);
+}
+
+.entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-5) var(--space-5);
+  margin-bottom: var(--space-3);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  gap: var(--space-4);
+}
+
+.entry:last-child {
+  margin-bottom: 0;
+}
+
+.playerInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.avatar {
+  width: var(--avatar-lg);
+  height: var(--avatar-lg);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+}
+
+.playerName {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+.totalRatings {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.scoreBlock {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.stars {
+  font-size: var(--text-xl);
+  color: var(--accent);
+  margin-bottom: var(--space-1);
+  line-height: 1;
+}
+
+.score {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}

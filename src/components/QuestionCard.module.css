@@ -1,0 +1,45 @@
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8) var(--space-8) var(--space-6);
+  max-width: var(--content-narrow);
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+}
+
+.question {
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: var(--space-4);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.explanation {
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+  margin-bottom: var(--space-6);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.instruction {
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background-color: var(--surface-raised);
+  border-radius: var(--radius-md);
+  border-left: 3px solid;
+  line-height: 1.5;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}

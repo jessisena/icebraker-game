@@ -1,0 +1,185 @@
+/* ── Stage — full-viewport centred composition ──────────────────────────── */
+
+.stage {
+  position: relative;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  overflow: hidden;
+}
+
+/* Ambient colour blooms in the background */
+.bloom {
+  position: fixed;
+  width: clamp(260px, 50vw, 440px);
+  height: clamp(260px, 50vw, 440px);
+  left: var(--bloom-x);
+  top: var(--bloom-y);
+  transform: translate(-50%, -50%);
+  border-radius: var(--radius-full);
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--bloom-color) 22%, transparent) 0%,
+    transparent 68%
+  );
+  pointer-events: none;
+  transition: background var(--duration-slow) var(--ease-standard);
+  z-index: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bloom {
+    animation: bloomPulse 8s ease-in-out infinite alternate;
+  }
+
+  .bloom:last-of-type {
+    animation-delay: -4s;
+  }
+}
+
+@keyframes bloomPulse {
+  from {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: var(--content-narrow);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-6) var(--space-8);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 24px 64px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 480px) {
+  .stage {
+    align-items: flex-start;
+    padding: var(--space-3);
+  }
+
+  .card {
+    padding: var(--space-4) var(--space-4) var(--space-6);
+    border-radius: var(--radius-lg);
+  }
+}
+
+/* ── Card top: wordmark + prefs ──────────────────────────────────────────── */
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.wordmarkMain {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--brand);
+  letter-spacing: -0.02em;
+}
+
+.prefsSlot {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* ── Progress rail ───────────────────────────────────────────────────────── */
+
+.progressRail {
+  display: flex;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.segment {
+  flex: 1;
+  height: 4px;
+  border-radius: var(--radius-full);
+  border: none;
+  background-color: var(--border);
+  padding: 0;
+  cursor: default;
+  transition:
+    background-color var(--duration-slow) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+}
+
+.segment:disabled {
+  cursor: default;
+}
+
+.segment:not(:disabled):hover {
+  transform: scaleY(1.5);
+}
+
+.segmentDone {
+  background-color: var(--accent);
+  cursor: pointer;
+}
+
+.segmentActive {
+  background-color: var(--brand);
+}
+
+.stepIndicator {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-5);
+}
+
+/* ── Step content ────────────────────────────────────────────────────────── */
+
+.stepContent {
+  /* View Transitions targets this element */
+  view-transition-name: step-content;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(step-content) {
+    animation: stepOut var(--duration-base) var(--ease-standard) both;
+  }
+  ::view-transition-new(step-content) {
+    animation: stepIn var(--duration-base) var(--ease-standard) both;
+  }
+}
+
+@keyframes stepOut {
+  to {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+}
+
+@keyframes stepIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}

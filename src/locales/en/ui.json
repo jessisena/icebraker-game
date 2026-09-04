@@ -1,0 +1,137 @@
+{
+  "setup": {
+    "stageTitle": "Preguntados",
+    "stageTagline": "The game for getting to know each other",
+    "step": "Step {{current}} of {{total}}",
+    "step0Title": "Who goes first?",
+    "step0Helper": "Choose your name, avatar and colour",
+    "step1Title": "And the second player?",
+    "step1Helper": "Now set up the other player",
+    "step2Title": "How will you play?",
+    "step2Helper": "Pick a mode — it filters the available categories",
+    "nameLabel": "Your name",
+    "namePlaceholder": "Type a name…",
+    "avatarLabel": "Avatar",
+    "colorLabel": "Colour",
+    "back": "← Back",
+    "next": "Next →",
+    "startButton": "Let's play!",
+    "errors": {
+      "nameRequired": "Enter a name",
+      "nameDuplicate": "Players must have different names"
+    },
+    "avatars": {
+      "cat": "Cat",
+      "dog": "Dog",
+      "bird": "Bird",
+      "fish": "Fish",
+      "fox": "Fox",
+      "owl": "Owl"
+    },
+    "colors": {
+      "ember": "Ember",
+      "amber": "Amber",
+      "moss": "Moss",
+      "sky": "Sky",
+      "orchid": "Orchid",
+      "rose": "Rose"
+    }
+  },
+  "game": {
+    "leaderboard": "Leaderboard",
+    "changePlayers": "Change Players",
+    "changeMode": "Change Mode",
+    "nextTurn": "Next turn",
+    "nowPlaying": "Playing now",
+    "themeLight": "Switch to light theme",
+    "themeDark": "Switch to dark theme",
+    "langSwitch": "Español"
+  },
+  "mode": {
+    "heading": "How will you play?",
+    "subheading": "Mode filters which categories are available",
+    "couples": "💞 Couple",
+    "friends": "🎉 Friends",
+    "team": "💼 Team",
+    "couples_desc": "Intimate questions to get to know each other deeply",
+    "friends_desc": "Fun questions for groups of friends",
+    "team_desc": "Questions for teams and professional settings",
+    "current": "Current mode: {{mode}}"
+  },
+  "toast": {
+    "categoryExhausted": "You've answered all questions in this category. Choose another.",
+    "decadeExhausted": "You've answered all songs from the {{decade}}s. Choose another decade."
+  },
+  "modal": {
+    "changePlayers": {
+      "title": "Change players?",
+      "message": "All current ratings will be lost.",
+      "confirm": "Yes, change"
+    }
+  },
+  "question": {
+    "answered": "✓ I Answered",
+    "skip": "⏭ Skip",
+    "defaultInstruction": "{{name}}, answer the question",
+    "musicInstruction": "{{name}}, your opponent will play the song. Can you guess the artist and title?"
+  },
+  "rating": {
+    "justAnswered": "{{name}} just answered",
+    "ratePrompt": "{{rater}}, {{criteria}}",
+    "criteria": {
+      "default": "How would you rate this answer?",
+      "music": "Rate your opponent's answer",
+      "absurdista": "Rate the TED Talk's creativity and how well they incorporated a trait about you",
+      "atlasOfMe": "Rate how strong the connection to the place is",
+      "dilemma": "Rate the depth of the moral reasoning and the justification for their choice"
+    },
+    "atlas": {
+      "none": "No Connection",
+      "light": "Light Connection",
+      "strong": "Strong Connection"
+    },
+    "music": {
+      "none": "None",
+      "partial": "Partial",
+      "perfect": "Perfect"
+    },
+    "points": {
+      "zero": "0 points",
+      "one": "1 point",
+      "two": "2 points"
+    },
+    "legend": {
+      "atlas": "2 pts = Strong, specific connection · 1 pt = Light connection · 0 pts = No connection",
+      "music": "2 pts = Artist + Title correct · 1 pt = Only one · 0 pts = No match"
+    }
+  },
+  "decade": {
+    "heading": "{{name}}, choose a decade",
+    "headingAction": ", choose a decade",
+    "subheading": "Select which decade you want your opponent to guess",
+    "songs_one": "{{count}} song",
+    "songs_other": "{{count}} songs"
+  },
+  "category": {
+    "heading": "{{name}}, choose a category",
+    "headingAction": ", choose a category",
+    "subheading": "Select the type of question you'd like to answer",
+    "questions_one": "{{count}} question",
+    "questions_other": "{{count}} questions"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "ratings_one": "{{count}} rating",
+    "ratings_other": "{{count}} ratings",
+    "backToGame": "Back to Game",
+    "changePlayers": "Change Players"
+  },
+  "gameOver": {
+    "title": "Game over!",
+    "subtitle": "All questions answered",
+    "replay": "Play again",
+    "changePlayers": "Change players",
+    "answers_one": "{{count}} answer",
+    "answers_other": "{{count}} answers"
+  }
+}

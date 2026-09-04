@@ -1,0 +1,56 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  position: relative;
+}
+
+.glowRing {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  width: calc(var(--avatar-lg) + 32px);
+  height: calc(var(--avatar-lg) + 32px);
+  border-radius: var(--radius-full);
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--glow-color) 35%, transparent) 0%,
+    transparent 70%
+  );
+  pointer-events: none;
+  transition: background var(--duration-slow) var(--ease-standard);
+}
+
+.avatarWrap {
+  position: relative;
+  z-index: 1;
+  padding: var(--space-3);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--glow-color, var(--brand)) 8%, var(--surface));
+  border: 2px solid color-mix(in srgb, var(--glow-color, var(--brand)) 30%, transparent);
+  transition:
+    background var(--duration-slow) var(--ease-standard),
+    border-color var(--duration-slow) var(--ease-standard),
+    box-shadow var(--duration-slow) var(--ease-standard);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+  letter-spacing: -0.01em;
+  transition: color var(--duration-base) var(--ease-standard);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.namePlaceholder {
+  color: var(--text-muted);
+  font-style: italic;
+}

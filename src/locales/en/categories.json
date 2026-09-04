@@ -1,0 +1,24 @@
+{
+  "spark": { "name": "The Spark", "description": "Light & Fun" },
+  "roots": { "name": "The Roots", "description": "Past & Memories" },
+  "mirror": { "name": "The Mirror", "description": "How We See Ourselves" },
+  "heat": { "name": "The Heat", "description": "Intimacy & Desire" },
+  "shadow": { "name": "The Shadow", "description": "Deep & Uncomfortable" },
+  "absurdista": {
+    "name": "The Absurdist",
+    "description": "Absurd TED Talks",
+    "instructions": "Give a 90-second TED Talk defending this absurd idea. Include a trait or anecdote about your opponent in your argument."
+  },
+  "decadesTape": { "name": "The Decades Tape", "description": "Music Trivia" },
+  "atlasOfMe": {
+    "name": "Atlas of Me",
+    "description": "Places & Space",
+    "instructions": "Share a memory or personal experience related to this place. Your opponent will rate how strong the connection is."
+  },
+  "dilemma": {
+    "name": "The Dilemma",
+    "description": "Values & Decisions",
+    "instructions": "Present an impossible choice. Your opponent must choose one and explain why their principles led them there."
+  },
+  "all": { "name": "All", "description": "Random Surprise" }
+}

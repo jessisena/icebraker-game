@@ -1,0 +1,51 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.swatch {
+  aspect-ratio: 1;
+  width: 100%;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: 3px solid transparent;
+  background-color: var(--swatch-color);
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swatch:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--swatch-color) 40%, transparent);
+}
+
+.swatch:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
+.swatch.selected {
+  border-color: var(--text);
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px var(--swatch-color),
+    0 4px 16px color-mix(in srgb, var(--swatch-color) 50%, transparent);
+}
+
+.check {
+  font-size: 1.1rem;
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+  pointer-events: none;
+}

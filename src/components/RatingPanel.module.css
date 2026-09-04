@@ -1,0 +1,162 @@
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.container {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  max-width: var(--content-narrow);
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: none;
+    width: 100%;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    border-bottom: none;
+    z-index: 50;
+    max-height: 80dvh;
+    overflow-y: auto;
+    padding: var(--space-6) var(--space-5) var(--space-8);
+    animation: slideUp var(--duration-base) var(--ease-standard);
+  }
+}
+
+.handle {
+  display: none;
+  width: 40px;
+  height: 4px;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  margin: 0 auto var(--space-5);
+}
+
+@media (max-width: 640px) {
+  .handle {
+    display: block;
+  }
+}
+
+.title {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  color: var(--brand);
+  margin-bottom: var(--space-2);
+}
+
+.criteria {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  margin-bottom: var(--space-4);
+}
+
+.legend {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: var(--space-6);
+  line-height: 1.7;
+}
+
+/* Star ratings (1–5) */
+.starGrid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.starButton {
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--border);
+  background-color: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+  min-width: 4rem;
+  font-family: var(--font-ui);
+}
+
+.starButton:hover {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.starButton:active {
+  transform: translateY(0);
+}
+
+/* Point ratings (0–2) */
+.pointGrid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.pointButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  background-color: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard),
+    transform var(--duration-fast) var(--ease-standard);
+  min-width: 110px;
+  font-family: var(--font-ui);
+}
+
+.pointButton:hover {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.pointButton:active {
+  transform: translateY(0);
+}
+
+.pointEmoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.pointLabel {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.pointDesc {
+  font-size: var(--text-xs);
+  opacity: 0.8;
+}

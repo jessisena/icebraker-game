@@ -3,12 +3,10 @@
     "stageTitle": "Preguntados",
     "stageTagline": "The game for getting to know each other",
     "step": "Step {{current}} of {{total}}",
-    "step0Title": "Who goes first?",
-    "step0Helper": "Choose your name, avatar and colour",
-    "step1Title": "And the second player?",
-    "step1Helper": "Now set up the other player",
-    "step2Title": "How will you play?",
-    "step2Helper": "Pick a mode — it filters the available categories",
+    "step0Title": "How will you play?",
+    "step0Helper": "Pick a mode — it filters the available categories",
+    "step1Title": "Who's playing?",
+    "step1Helper": "Add all players and set up their details",
     "nameLabel": "Your name",
     "namePlaceholder": "Type a name…",
     "avatarLabel": "Avatar",
@@ -16,9 +14,13 @@
     "back": "← Back",
     "next": "Next →",
     "startButton": "Let's play!",
+    "addPlayer": "+ Add player",
+    "removePlayer": "Remove player",
+    "playerN": "Player {{n}}",
     "errors": {
       "nameRequired": "Enter a name",
-      "nameDuplicate": "Players must have different names"
+      "nameDuplicate": "Players must have different names",
+      "maxPlayers": "Maximum 6 players reached"
     },
     "avatars": {
       "cat": "Cat",
@@ -56,7 +58,11 @@
     "couples_desc": "Intimate questions to get to know each other deeply",
     "friends_desc": "Fun questions for groups of friends",
     "team_desc": "Questions for teams and professional settings",
-    "current": "Current mode: {{mode}}"
+    "couples_players": "2 players",
+    "friends_players": "2–6 players",
+    "team_players": "2–6 players",
+    "current": "Current mode: {{mode}}",
+    "couplesDisabled": "Couples mode is for 2 players — reduce the group first"
   },
   "toast": {
     "categoryExhausted": "You've answered all questions in this category. Choose another.",
@@ -108,7 +114,7 @@
   "decade": {
     "heading": "{{name}}, choose a decade",
     "headingAction": ", choose a decade",
-    "subheading": "Select which decade you want your opponent to guess",
+    "subheading": "Select which decade you want the next player to guess",
     "songs_one": "{{count}} song",
     "songs_other": "{{count}} songs"
   },

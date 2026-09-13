@@ -29,8 +29,10 @@
 
 .avatarRow {
   display: flex;
-  gap: var(--space-5);
+  gap: var(--space-3);
   justify-content: center;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .avatar {
@@ -51,6 +53,14 @@
   font-weight: 600;
   color: var(--text);
   text-align: center;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 480px) {
+  .playerNames {
+    font-size: var(--text-lg);
+  }
 }
 
 .headerActions {

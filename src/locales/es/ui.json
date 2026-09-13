@@ -3,12 +3,10 @@
     "stageTitle": "Preguntados",
     "stageTagline": "El juego para conocerse de verdad",
     "step": "Paso {{current}} de {{total}}",
-    "step0Title": "¿Quién juega primero?",
-    "step0Helper": "Elige tu nombre, avatar y color",
-    "step1Title": "¿Y el segundo jugador?",
-    "step1Helper": "Ahora configura al otro jugador",
-    "step2Title": "¿Cómo vais a jugar?",
-    "step2Helper": "Elige el modo — filtra las categorías disponibles",
+    "step0Title": "¿Cómo vais a jugar?",
+    "step0Helper": "Elige el modo — filtra las categorías disponibles",
+    "step1Title": "¿Quién va a jugar?",
+    "step1Helper": "Añade a todos los jugadores y configura sus datos",
     "nameLabel": "Tu nombre",
     "namePlaceholder": "Escribe un nombre…",
     "avatarLabel": "Avatar",
@@ -16,9 +14,13 @@
     "back": "← Atrás",
     "next": "Siguiente →",
     "startButton": "¡Empezar!",
+    "addPlayer": "+ Añadir jugador",
+    "removePlayer": "Quitar jugador",
+    "playerN": "Jugador {{n}}",
     "errors": {
       "nameRequired": "Introduce un nombre",
-      "nameDuplicate": "Los jugadores deben tener nombres diferentes"
+      "nameDuplicate": "Los jugadores deben tener nombres diferentes",
+      "maxPlayers": "Ya hay 6 jugadores"
     },
     "avatars": {
       "cat": "Gato",
@@ -56,7 +58,11 @@
     "couples_desc": "Preguntas íntimas para conocerse en profundidad",
     "friends_desc": "Preguntas divertidas para grupos de amigos",
     "team_desc": "Preguntas para equipos y entornos profesionales",
-    "current": "Modo actual: {{mode}}"
+    "couples_players": "2 jugadores",
+    "friends_players": "2–6 jugadores",
+    "team_players": "2–6 jugadores",
+    "current": "Modo actual: {{mode}}",
+    "couplesDisabled": "Modo Pareja es para 2 jugadores — reduce el grupo primero"
   },
   "toast": {
     "categoryExhausted": "Ya has respondido todas las preguntas de esta categoría. Elige otra.",
@@ -108,7 +114,7 @@
   "decade": {
     "heading": "{{name}}, elige una década",
     "headingAction": ", elige una década",
-    "subheading": "Selecciona qué década quieres que adivine tu oponente",
+    "subheading": "Selecciona qué década quieres que adivine el siguiente jugador",
     "songs_one": "{{count}} canción",
     "songs_other": "{{count}} canciones"
   },

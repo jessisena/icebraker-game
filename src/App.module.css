@@ -35,19 +35,6 @@
   max-width: 100%;
 }
 
-.avatar {
-  width: var(--avatar-lg);
-  height: var(--avatar-lg);
-  border-radius: var(--radius-md);
-}
-
-@media (max-width: 480px) {
-  .avatar {
-    width: var(--avatar-md);
-    height: var(--avatar-md);
-  }
-}
-
 .playerNames {
   font-size: var(--text-2xl);
   font-weight: 600;

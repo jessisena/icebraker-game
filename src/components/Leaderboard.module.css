@@ -43,13 +43,6 @@
   gap: var(--space-4);
 }
 
-.avatar {
-  width: var(--avatar-lg);
-  height: var(--avatar-lg);
-  border-radius: var(--radius-md);
-  flex-shrink: 0;
-}
-
 .playerName {
   font-size: var(--text-xl);
   font-weight: 600;

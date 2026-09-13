@@ -6,13 +6,13 @@ import useGame from './useGame'
 
 const wrapper = ({ children }) => <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
 
-const makePlayer = (name, avatar = 'cat', color = '#e8615c') => ({ name, avatar, color })
+const makePlayer = (name, avatar = 'moon', color = '#e8615c') => ({ name, avatar, color })
 
 const FOUR_PLAYERS = [
-  makePlayer('Alice', 'cat', '#e8615c'),
-  makePlayer('Bob', 'dog', '#4fa8e8'),
-  makePlayer('Carol', 'bird', '#5fb37a'),
-  makePlayer('Dan', 'fish', '#e89a3c'),
+  makePlayer('Alice', 'moon', '#e8615c'),
+  makePlayer('Bob', 'sun', '#4fa8e8'),
+  makePlayer('Carol', 'star', '#5fb37a'),
+  makePlayer('Dan', 'comet', '#e89a3c'),
 ]
 
 // Provide a real in-memory localStorage if the test env's one is limited
@@ -129,7 +129,7 @@ describe('useGame — session restore', () => {
   it('migrates legacy {player1, player2} shape to array', () => {
     const legacy = {
       player1: makePlayer('Alice'),
-      player2: makePlayer('Bob', 'dog', '#4fa8e8'),
+      player2: makePlayer('Bob', 'sun', '#4fa8e8'),
     }
     localStorage.setItem('gamePlayers', JSON.stringify(legacy))
     localStorage.setItem('gameMode', JSON.stringify('couples'))

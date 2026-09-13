@@ -1,11 +1,11 @@
 /* Avatar definitions — labelKey maps to setup.avatars.{name} in both locale files */
 export const avatars = [
-  { name: 'cat', labelKey: 'setup.avatars.cat' },
-  { name: 'dog', labelKey: 'setup.avatars.dog' },
-  { name: 'bird', labelKey: 'setup.avatars.bird' },
-  { name: 'fish', labelKey: 'setup.avatars.fish' },
-  { name: 'fox', labelKey: 'setup.avatars.fox' },
-  { name: 'owl', labelKey: 'setup.avatars.owl' },
+  { name: 'moon', labelKey: 'setup.avatars.moon' },
+  { name: 'sun', labelKey: 'setup.avatars.sun' },
+  { name: 'star', labelKey: 'setup.avatars.star' },
+  { name: 'comet', labelKey: 'setup.avatars.comet' },
+  { name: 'planet', labelKey: 'setup.avatars.planet' },
+  { name: 'constellation', labelKey: 'setup.avatars.constellation' },
 ]
 
 /* Six jewel tones that harmonise with the Velvet Hour dark palette */

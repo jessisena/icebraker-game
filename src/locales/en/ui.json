@@ -23,12 +23,12 @@
       "maxPlayers": "Maximum 6 players reached"
     },
     "avatars": {
-      "cat": "Cat",
-      "dog": "Dog",
-      "bird": "Bird",
-      "fish": "Fish",
-      "fox": "Fox",
-      "owl": "Owl"
+      "moon": "Moon",
+      "sun": "Sun",
+      "star": "Star",
+      "comet": "Comet",
+      "planet": "Planet",
+      "constellation": "Constellation"
     },
     "colors": {
       "ember": "Ember",

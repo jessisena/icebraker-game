@@ -78,3 +78,16 @@
   font-size: var(--text-sm);
   color: var(--text-muted);
 }
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.disabledHint {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: var(--space-1);
+}

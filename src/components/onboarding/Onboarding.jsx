@@ -1,25 +1,24 @@
 import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
-import { colors } from '../../data/options'
-import PlayerStep from './PlayerStep'
+import { avatars, colors } from '../../data/options'
 import ModeStep from './ModeStep'
+import RosterStep from './RosterStep'
 import styles from './Onboarding.module.css'
 
-const TOTAL_STEPS = 3
+const TOTAL_STEPS = 2
 
-const DEFAULT_PLAYER = (colorIndex) => ({
-  name: '',
-  avatar: colorIndex === 0 ? 'cat' : 'dog',
-  color: colors[colorIndex]?.value ?? colors[0].value,
-})
+const DEFAULT_PLAYERS = [
+  { name: '', avatar: avatars[0].name, color: colors[0].value },
+  { name: '', avatar: avatars[1].name, color: colors[3].value },
+]
 
 export default function Onboarding({ onComplete, prefsSlot }) {
   const { t } = useTranslation()
 
   const [step, setStep] = useState(0)
-  const [players, setPlayers] = useState([DEFAULT_PLAYER(0), DEFAULT_PLAYER(3)])
   const [mode, setMode] = useState(null)
+  const [players, setPlayers] = useState(DEFAULT_PLAYERS)
 
   const goTo = (nextStep) => {
     if (typeof document.startViewTransition === 'function') {
@@ -29,34 +28,33 @@ export default function Onboarding({ onComplete, prefsSlot }) {
     }
   }
 
-  const handleP0Next = (data) => {
-    setPlayers((prev) => [data, prev[1]])
+  const handleModeNext = () => {
+    // Clamp roster to 2 when switching to couples (user may have gone back after adding players)
+    if (mode === 'couples' && players.length > 2) {
+      setPlayers((prev) => prev.slice(0, 2))
+    }
     goTo(1)
   }
 
-  const handleP1Next = (data) => {
-    setPlayers((prev) => [prev[0], data])
-    goTo(2)
+  const handleStart = (finalPlayers) => {
+    onComplete({ players: finalPlayers, mode })
   }
 
-  const handleStart = () => {
-    onComplete({ player1: players[0], player2: players[1], mode })
-  }
-
-  const p0Color = players[0].color
-  const p1Color = players[1].color
+  // Bloom colors: first and last player for ambient background
+  const bloom0Color = players[0].color
+  const bloom1Color = players[players.length - 1].color
 
   return (
     <div className={styles.stage}>
       {/* Ambient background blooms */}
       <div
         className={styles.bloom}
-        style={{ '--bloom-color': p0Color, '--bloom-x': '20%', '--bloom-y': '30%' }}
+        style={{ '--bloom-color': bloom0Color, '--bloom-x': '20%', '--bloom-y': '30%' }}
         aria-hidden="true"
       />
       <div
         className={styles.bloom}
-        style={{ '--bloom-color': p1Color, '--bloom-x': '80%', '--bloom-y': '65%' }}
+        style={{ '--bloom-color': bloom1Color, '--bloom-x': '80%', '--bloom-y': '65%' }}
         aria-hidden="true"
       />
 
@@ -99,23 +97,14 @@ export default function Onboarding({ onComplete, prefsSlot }) {
         {/* Step content */}
         <div className={styles.stepContent}>
           {step === 0 && (
-            <PlayerStep stepIndex={0} draft={players[0]} otherName={null} onNext={handleP0Next} />
+            <ModeStep selectedMode={mode} onModeSelect={setMode} onNext={handleModeNext} />
           )}
           {step === 1 && (
-            <PlayerStep
-              stepIndex={1}
-              draft={players[1]}
-              otherName={players[0].name}
-              onNext={handleP1Next}
-              onBack={() => goTo(0)}
-            />
-          )}
-          {step === 2 && (
-            <ModeStep
+            <RosterStep
+              mode={mode}
               players={players}
-              selectedMode={mode}
-              onModeSelect={setMode}
-              onBack={() => goTo(1)}
+              onPlayersChange={setPlayers}
+              onBack={() => goTo(0)}
               onStart={handleStart}
             />
           )}

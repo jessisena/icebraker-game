@@ -105,6 +105,17 @@
   line-height: 1.5;
 }
 
+.modeCount {
+  font-size: var(--text-xs, 0.75rem);
+  color: var(--text-muted);
+  margin-top: var(--space-1);
+  font-weight: 500;
+}
+
+.active .modeCount {
+  color: var(--accent);
+}
+
 /* Actions */
 .actions {
   display: flex;
@@ -114,11 +125,11 @@
   padding-top: var(--space-2);
 }
 
-.startBtn {
+.nextBtn {
   min-width: 160px;
 }
 
-.startBtn:disabled {
+.nextBtn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
   transform: none !important;

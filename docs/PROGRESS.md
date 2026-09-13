@@ -240,4 +240,51 @@ Status legend: `Not started` · `In progress` · `✅ Complete (YYYY-MM-DD)`
 
 ### Follow-ups deferred
 - End-to-end browser playthrough with mode switching mid-game (requires browser session)
-- N-player generalization (3+ players) — architecture is ready (array-based players), UI stays at 2
+
+---
+
+## Phase 6 — 2–6 player support for Friends & Team modes
+
+**Status:** ✅ Complete (2026-09-13)
+
+### Deliverables checklist
+- [x] Mode selection moved to step 1 of onboarding (before player configuration)
+- [x] Couples mode locked at 2 players; Friends & Team allow 2–6
+- [x] Single-screen roster step replaces the two fixed `PlayerStep` screens
+- [x] Round-robin turn rotation `(currentPlayer + 1) % players.length`
+- [x] Group consensus rating: one tap, all other players named in the prompt
+- [x] `Intl.ListFormat` for locale-aware name conjunction in `RatingPanel`
+- [x] Mid-game "Cambiar Modo" fixed: now opens `ModeSelector` correctly; Couples disabled when group > 2
+- [x] Session restore guard updated: accepts 2–6 players (was hardcoded to exactly 2)
+- [x] `startGame` and `replayGame` seed ratings for every player in the array
+- [x] `showModeSelector` action added to `useGame` (opens selector without clearing mode)
+- [x] `PlayerStep.jsx` and `PlayerStep.module.css` deleted (replaced by `RosterStep`)
+- [x] `Onboarding.test.jsx` rewritten for new 2-step flow
+- [x] `useGame.test.jsx` added: startGame N-player seeding, session restore, sortedPlayers ranking, replayGame, legacy migration
+- [x] Lint: 0 warnings, 0 errors
+
+### What actually changed
+- `src/components/onboarding/Onboarding.jsx` — 3-step (player → player → mode) replaced with 2-step (mode → roster); `onComplete` payload changed from `{player1, player2, mode}` to `{players, mode}`
+- `src/components/onboarding/ModeStep.jsx` — dropped `players`/`IdentityCard`/VS identity summary; `onStart` → `onNext`; player count badge added to each card
+- `src/components/onboarding/ModeStep.module.css` — added `.modeCount`, renamed `.startBtn` → `.nextBtn`
+- `src/components/onboarding/RosterStep.jsx` — new: accordion player list, add/remove rows, inline validation
+- `src/components/onboarding/RosterStep.module.css` — new
+- `src/components/onboarding/PlayerStep.jsx` — **deleted**
+- `src/components/onboarding/PlayerStep.module.css` — **deleted**
+- `src/hooks/useGame.js` — `startGame` takes `{players, mode}` array; session restore: `length !== 2` → `length < 2 || length > 6`; `submitRating` rotation: `1 - currentPlayer` → `(currentPlayer + 1) % players.length`; `replayGame` seeds all players; `showModeSelector` added
+- `src/App.jsx` — `nextPlayerData` uses round-robin; `raters` array passed to `RatingPanel`; "Cambiar Modo" calls `game.showModeSelector()`; `ModeSelector` receives `playerCount` prop
+- `src/components/RatingPanel.jsx` — `raterData` (object) → `raters` (array); `Intl.ListFormat` for name conjunction
+- `src/components/ModeSelector.jsx` — removed dead `categories: N` field; `playerCount` prop; Couples disabled when `playerCount > 2`
+- `src/components/ModeSelector.module.css` — `.disabled` and `.disabledHint` added
+- `src/App.module.css` — `.avatarRow` wraps and uses smaller gap for 6 avatars; `.playerNames` has mobile font fallback
+- `src/locales/{es,en}/ui.json` — step keys renumbered; `setup.addPlayer`, `removePlayer`, `playerN`, `errors.maxPlayers`; `mode.*_players`, `mode.couplesDisabled`; decade subheading updated from "opponent" to "next player"
+- `src/components/onboarding/Onboarding.test.jsx` — **rewritten**: 29 tests across mode step, roster (Couples/Friends), validation, and happy path (2-player and 4-player)
+- `src/hooks/useGame.test.jsx` — **new**: 10 tests for startGame, session restore, sortedPlayers, replayGame, legacy migration
+
+### Verification performed
+- `npm run lint` → 0 warnings, 0 errors
+- `npm test` → 29 tests passing
+
+### Follow-ups deferred
+- End-to-end browser playthrough: Friends 4-player rotation, Couples unchanged, Team 6-player, session restore, mid-game mode change
+- `npm run build` size check (target: ≤120 KB gzip; deletion of PlayerStep offsets RosterStep addition)

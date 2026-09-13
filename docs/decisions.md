@@ -4,6 +4,25 @@ A running log of decisions and their rationale, newest-first.
 
 ---
 
+## 2026-09-13 — 2–6 players for Friends & Team; Couples stays at 2
+
+**Decision:** Implement N-player support (2–6) for Friends and Team modes. Couples stays locked at exactly 2. Mode selection moves to the first onboarding step (before players are configured) so the mode can gate the roster size. Group consensus rating: all non-answering players agree on one score, entered with a single tap. Turn rotation is round-robin `(currentPlayer + 1) % players.length`.
+
+**Supersedes:** "2026-09-04 — Stay 2-player, array-shape state for future."
+
+**Why:**
+- The array-based `players` state from Phase 5 made the logic changes minimal — session restore, rating seeding, and leaderboard ranking were already N-generic or close to it.
+- Mode-first onboarding is the natural place to gate player count: the mode determines which count is valid, so it must be known before the roster is built.
+- Single-screen roster (accordion rows, add/remove) is simpler than a separate wizard step per player — it scales from 2 to 6 without multiplying step count.
+- Consensus-one-tap rating keeps the same UX flow regardless of group size. Per-player individual scoring would require N-1 additional taps per turn.
+
+**Alternatives rejected:**
+- Separate wizard step per player (up to 6 steps for Friends/Team): rejected for UX complexity and test surface area.
+- Each player rates individually and the average is stored: adds N-1 taps per turn; consensus aloud is idiomatic for a party game.
+- All three modes allow 2–6: Couples is explicitly intimate; allowing 3-player "Couples" is semantically wrong.
+
+---
+
 ## 2026-09-04 — Drop MUI, adopt CSS Modules + custom properties
 
 **Decision:** Remove `@mui/material` and all related packages. Style with CSS custom properties (tokens) and colocated CSS Modules per component.

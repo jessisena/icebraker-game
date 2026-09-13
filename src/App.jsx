@@ -53,8 +53,9 @@ function App() {
   }
 
   const currentPlayerData = game.players[game.currentPlayer]
-  const nextPlayerData = game.players[1 - game.currentPlayer]
-  const raterData = game.players[1 - game.currentPlayer]
+  const nextIdx = (game.currentPlayer + 1) % game.players.length
+  const nextPlayerData = game.players[nextIdx]
+  const raters = game.players.filter((_, i) => i !== game.currentPlayer)
 
   return (
     <div className={styles.screen}>
@@ -74,7 +75,7 @@ function App() {
         </h1>
         <div className={styles.headerActions}>
           <Button onClick={() => game.setShowLeaderboard(true)}>{t('game.leaderboard')}</Button>
-          <Button variant="ghost" onClick={() => game.selectMode(null)}>
+          <Button variant="ghost" onClick={game.showModeSelector}>
             {t('game.changeMode')}
           </Button>
           <Button variant="ghost" onClick={game.resetGame}>
@@ -91,7 +92,11 @@ function App() {
 
       <div className={styles.phaseContent}>
         {game.phase === 'selecting-mode' && (
-          <ModeSelector currentMode={game.mode} onModeSelect={game.selectMode} />
+          <ModeSelector
+            currentMode={game.mode}
+            onModeSelect={game.selectMode}
+            playerCount={game.players.length}
+          />
         )}
 
         {game.phase === 'selecting-category' && (
@@ -140,7 +145,7 @@ function App() {
             <div className={styles.sheetBackdrop} />
             <RatingPanel
               playerWhoAnswered={game.playerWhoAnswered}
-              raterData={raterData}
+              raters={raters}
               submitRating={game.submitRating}
               categoryKey={game.selectedCategory}
             />

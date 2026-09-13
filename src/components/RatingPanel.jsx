@@ -5,8 +5,8 @@ import styles from './RatingPanel.module.css'
 
 const STAR_OPTIONS = [1, 2, 3, 4, 5].map((n) => ({ value: n, label: `${n} ★` }))
 
-export default function RatingPanel({ playerWhoAnswered, raterData, submitRating, categoryKey }) {
-  const { t } = useTranslation()
+export default function RatingPanel({ playerWhoAnswered, raters, submitRating, categoryKey }) {
+  const { t, i18n } = useTranslation()
   const categoryMeta = categories[categoryKey]
   const isMusicTrivia = categoryMeta?.specialBehavior === 'music-trivia'
   const isAtlas = categoryMeta?.key === 'atlasOfMe'
@@ -24,6 +24,13 @@ export default function RatingPanel({ playerWhoAnswered, raterData, submitRating
             : 'default'
 
   const criteria = t(`rating.criteria.${criteriaKey}`)
+
+  // Build the rater label — single name or a locale-aware conjunction list
+  const raterNames = raters.map((r) => r.name)
+  const raterLabel =
+    raterNames.length === 1
+      ? raterNames[0]
+      : new Intl.ListFormat(i18n.language, { type: 'conjunction' }).format(raterNames)
 
   const atlasOptions = [
     { value: 0, label: t('rating.atlas.none'), emoji: '🚫', desc: t('rating.points.zero') },
@@ -43,9 +50,7 @@ export default function RatingPanel({ playerWhoAnswered, raterData, submitRating
     <div className={styles.container}>
       <div className={styles.handle} aria-hidden="true" />
       <h2 className={styles.title}>{t('rating.justAnswered', { name: playerWhoAnswered })}</h2>
-      <p className={styles.criteria}>
-        {t('rating.ratePrompt', { rater: raterData.name, criteria })}
-      </p>
+      <p className={styles.criteria}>{t('rating.ratePrompt', { rater: raterLabel, criteria })}</p>
 
       {isPointScored && (
         <p className={styles.legend}>
@@ -86,7 +91,12 @@ export default function RatingPanel({ playerWhoAnswered, raterData, submitRating
 
 RatingPanel.propTypes = {
   playerWhoAnswered: PropTypes.string,
-  raterData: PropTypes.object.isRequired,
+  raters: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      color: PropTypes.string.isRequired,
+    })
+  ).isRequired,
   submitRating: PropTypes.func.isRequired,
   categoryKey: PropTypes.string,
 }

@@ -64,10 +64,10 @@ export default function useGame() {
 
   // Restore game session from localStorage
   useEffect(() => {
-    if (!Array.isArray(players) || players.length !== 2) return
+    if (!Array.isArray(players) || players.length < 2 || players.length > 6) return
     setGameStarted(true)
     if (!ratings || Object.keys(ratings).length === 0) {
-      setRatings({ [players[0].name]: [], [players[1].name]: [] })
+      setRatings(Object.fromEntries(players.map((p) => [p.name, []])))
     }
     setPhase(mode ? 'selecting-category' : 'selecting-mode')
   }, [players]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -141,11 +141,10 @@ export default function useGame() {
     })
   }
 
-  const startGame = (playerConfig) => {
-    const playerArray = [playerConfig.player1, playerConfig.player2]
+  const startGame = ({ players: playerArray, mode: gameMode }) => {
     setPlayers(playerArray)
-    setRatings({ [playerConfig.player1.name]: [], [playerConfig.player2.name]: [] })
-    setMode(playerConfig.mode)
+    setRatings(Object.fromEntries(playerArray.map((p) => [p.name, []])))
+    setMode(gameMode)
     setGameStarted(true)
     setCategoryQuestions({ ...INITIAL_QUESTIONS })
     setCurrentPlayer(0)
@@ -156,6 +155,8 @@ export default function useGame() {
     setMode(selectedMode)
     withTransition(() => setPhase('selecting-category'))
   }
+
+  const showModeSelector = () => withTransition(() => setPhase('selecting-mode'))
 
   const doReset = () => {
     setGameStarted(false)
@@ -186,7 +187,7 @@ export default function useGame() {
   const replayGame = () => {
     if (!players) return
     setCategoryQuestions({ ...INITIAL_QUESTIONS })
-    setRatings({ [players[0].name]: [], [players[1].name]: [] })
+    setRatings(Object.fromEntries(players.map((p) => [p.name, []])))
     setCurrentPlayer(0)
     setSelectedCategory(null)
     setSelectedDecade(null)
@@ -254,7 +255,7 @@ export default function useGame() {
       [playerWhoAnswered]: [...(prev[playerWhoAnswered] || []), rating],
     }))
 
-    const nextPlayer = 1 - currentPlayer
+    const nextPlayer = (currentPlayer + 1) % players.length
     setCurrentPlayer(nextPlayer)
     setPlayerWhoAnswered(null)
     setSelectedDecade(null)
@@ -312,6 +313,7 @@ export default function useGame() {
     sortedPlayers,
     startGame,
     selectMode,
+    showModeSelector,
     resetGame,
     replayGame,
     handleCategorySelect,

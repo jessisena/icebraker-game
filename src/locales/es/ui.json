@@ -23,12 +23,12 @@
       "maxPlayers": "Ya hay 6 jugadores"
     },
     "avatars": {
-      "cat": "Gato",
-      "dog": "Perro",
-      "bird": "Pájaro",
-      "fish": "Pez",
-      "fox": "Zorro",
-      "owl": "Búho"
+      "moon": "Luna",
+      "sun": "Sol",
+      "star": "Estrella",
+      "comet": "Cometa",
+      "planet": "Planeta",
+      "constellation": "Constelación"
     },
     "colors": {
       "ember": "Ember",

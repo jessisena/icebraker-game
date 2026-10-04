@@ -47,9 +47,9 @@ describe('CustomCategoryPicker', () => {
     const user = userEvent.setup()
     const onConfirm = renderPicker({ defaultSelected: ['spark'] })
     await user.click(screen.getByRole('checkbox', { name: /the spark/i }))
-    await user.click(screen.getByRole('checkbox', { name: /the shadow/i }))
+    await user.click(screen.getByRole('checkbox', { name: /decades tape/i }))
     await user.click(screen.getByRole('button', { name: /save categories/i }))
-    expect(onConfirm).toHaveBeenCalledWith(['shadow'])
+    expect(onConfirm).toHaveBeenCalledWith(['decadesTape'])
   })
 
   it('shows counts, the timer badge and the music hint', () => {
@@ -65,5 +65,22 @@ describe('CustomCategoryPicker', () => {
     renderPicker({ onBack })
     await user.click(screen.getByRole('button', { name: /back/i }))
     expect(onBack).toHaveBeenCalledOnce()
+  })
+})
+
+describe('CustomCategoryPicker — exhausted categories', () => {
+  beforeEach(() => {
+    i18n.changeLanguage('en')
+  })
+
+  it('blocks saving when every ticked category has no questions left', async () => {
+    const user = userEvent.setup()
+    renderPicker({ defaultSelected: ['absurdista'] })
+
+    expect(screen.getByRole('button', { name: 'Save categories' })).toBeDisabled()
+    expect(screen.getByText(/no questions left/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('checkbox', { name: /spark/i }))
+    expect(screen.getByRole('button', { name: 'Save categories' })).toBeEnabled()
   })
 })

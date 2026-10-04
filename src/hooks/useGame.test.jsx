@@ -389,3 +389,19 @@ describe('useGame — custom mode', () => {
     expect(localStorage.getItem('gameCustomCategories')).toBeNull()
   })
 })
+
+describe('useGame — blocked storage', () => {
+  it('still renders when localStorage throws on access', () => {
+    const blocked = () => {
+      throw new DOMException('blocked', 'SecurityError')
+    }
+    vi.stubGlobal('localStorage', { getItem: blocked, setItem: blocked, removeItem: blocked })
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    const { result } = renderHook(() => useGame(), { wrapper })
+    expect(result.current.gameStarted).toBe(false)
+
+    vi.unstubAllGlobals()
+    warnSpy.mockRestore()
+  })
+})

@@ -65,12 +65,17 @@ export default function useGame() {
 
   // Saved data from an older storage version: drop ratings, remap identity to current options
   useEffect(() => {
-    if (localStorage.getItem('storageVersion') === String(STORAGE_VERSION)) return
+    try {
+      if (localStorage.getItem('storageVersion') === String(STORAGE_VERSION)) return
+      localStorage.setItem('storageVersion', String(STORAGE_VERSION))
+    } catch (e) {
+      console.warn('useGame: storage unavailable, skipping saved-data upgrade:', e)
+      return
+    }
     if (Array.isArray(players) && players.length <= avatars.length) {
       setPlayers(players.map((p, i) => ({ ...p, avatar: avatars[i].name, color: colors[i].value })))
       setRatings(Object.fromEntries(players.map((p) => [p.name, []])))
     }
-    localStorage.setItem('storageVersion', String(STORAGE_VERSION))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Restore game session from localStorage

@@ -111,6 +111,7 @@
     "heading": "Elegid las categorías",
     "helper": "Marcad las que queréis jugar. Podéis cambiarlas durante la partida.",
     "minHelper": "Elige al menos una categoría para continuar",
+    "noQuestionsHelper": "A estas categorías no les quedan preguntas. Elige otra para continuar",
     "selected_one": "{{count}} categoría seleccionada",
     "selected_other": "{{count}} categorías seleccionadas",
     "musicHint": "Adivina canciones por década",

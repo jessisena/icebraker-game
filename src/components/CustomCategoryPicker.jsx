@@ -62,6 +62,12 @@ export default function CustomCategoryPicker({
   const helperId = useId()
   const [selected, setSelected] = useState(defaultSelected)
   const isEmpty = selected.length === 0
+  const hasNoQuestions = !isEmpty && selected.every((key) => (counts[key] ?? 0) === 0)
+  const statusText = isEmpty
+    ? t('customMode.minHelper')
+    : hasNoQuestions
+      ? t('customMode.noQuestionsHelper')
+      : t('customMode.selected', { count: selected.length })
 
   const toggle = (key) => {
     const next = selected.includes(key) ? selected.filter((k) => k !== key) : [...selected, key]
@@ -90,7 +96,7 @@ export default function CustomCategoryPicker({
       </fieldset>
 
       <p id={helperId} className={styles.status} aria-live="polite">
-        {isEmpty ? t('customMode.minHelper') : t('customMode.selected', { count: selected.length })}
+        {statusText}
       </p>
 
       <div className={styles.actions}>
@@ -102,7 +108,7 @@ export default function CustomCategoryPicker({
         <Button
           type="button"
           onClick={() => onConfirm(selected)}
-          disabled={isEmpty}
+          disabled={isEmpty || hasNoQuestions}
           aria-describedby={helperId}
           className={styles.confirmBtn}
         >

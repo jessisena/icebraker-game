@@ -10,11 +10,11 @@ function prefersReducedMotion() {
 }
 
 /* Scrolls only the deck horizontally so expanding a row never jumps the page */
-function centerInDeck(deck, card) {
+function centerInDeck(deck, card, animate) {
   if (!deck || !card || typeof deck.scrollTo !== 'function') return
   deck.scrollTo({
     left: card.offsetLeft - (deck.clientWidth - card.offsetWidth) / 2,
-    behavior: prefersReducedMotion() ? 'instant' : 'smooth',
+    behavior: animate && !prefersReducedMotion() ? 'smooth' : 'instant',
   })
 }
 
@@ -29,6 +29,7 @@ export default function CardDeck({
   const { t } = useTranslation()
   const deckRef = useRef(null)
   const refs = useRef([])
+  const hasMounted = useRef(false)
 
   const count = avatars.length
   const isFree = (i) => !takenBy[avatars[i].name]
@@ -36,7 +37,8 @@ export default function CardDeck({
   const tabStop = tabStopIndex(selectedIndex, count, isFree)
 
   useEffect(() => {
-    centerInDeck(deckRef.current, refs.current[selectedIndex])
+    centerInDeck(deckRef.current, refs.current[selectedIndex], hasMounted.current)
+    hasMounted.current = true
   }, [selectedIndex])
 
   const handleKeyDown = (e, index) => {

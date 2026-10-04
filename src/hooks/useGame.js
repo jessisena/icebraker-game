@@ -16,6 +16,9 @@ import {
   getAvailableDecades,
 } from '../assets/questions'
 import useLocalStorage from './useLocalStorage'
+import { avatars, colors } from '../data/options'
+import { STORAGE_VERSION } from '../data/ratings'
+import { rankPlayers } from '../game/scoring'
 
 const INITIAL_QUESTIONS = {
   spark: [...spark],
@@ -55,11 +58,14 @@ export default function useGame() {
   const [toast, setToast] = useState('')
   const [showLeaderboard, setShowLeaderboard] = useState(false)
 
-  // Migrate old {player1, player2} localStorage shape to array
+  // Saved data from an older storage version: drop ratings, remap identity to current options
   useEffect(() => {
-    if (players && !Array.isArray(players)) {
-      setPlayers([players.player1, players.player2])
+    if (localStorage.getItem('storageVersion') === String(STORAGE_VERSION)) return
+    if (Array.isArray(players) && players.length <= avatars.length) {
+      setPlayers(players.map((p, i) => ({ ...p, avatar: avatars[i].name, color: colors[i].value })))
+      setRatings(Object.fromEntries(players.map((p) => [p.name, []])))
     }
+    localStorage.setItem('storageVersion', String(STORAGE_VERSION))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Restore game session from localStorage
@@ -279,19 +285,7 @@ export default function useGame() {
     }
   }
 
-  const sortedPlayers = Array.isArray(players)
-    ? [...players]
-        .map((p) => ({
-          ...p,
-          average: (() => {
-            const r = ratings[p.name]
-            if (!r || r.length === 0) return 0
-            return (r.reduce((a, v) => a + v, 0) / r.length).toFixed(2)
-          })(),
-          totalRatings: ratings[p.name]?.length || 0,
-        }))
-        .sort((a, b) => b.average - a.average)
-    : []
+  const sortedPlayers = Array.isArray(players) ? rankPlayers(players, ratings) : []
 
   return {
     gameStarted,

@@ -3,6 +3,8 @@ import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest'
 import { I18nextProvider } from 'react-i18next'
 import i18n from '../i18n'
 import useGame from './useGame'
+import { avatars, colors } from '../data/options'
+import { RATING, STORAGE_VERSION } from '../data/ratings'
 
 const wrapper = ({ children }) => <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
 
@@ -88,6 +90,7 @@ describe('useGame — session restore', () => {
   beforeEach(() => {
     clearGameStorage()
     i18n.changeLanguage('en')
+    localStorage.setItem('storageVersion', String(STORAGE_VERSION))
   })
 
   it('restores a 5-player session from localStorage', () => {
@@ -105,6 +108,18 @@ describe('useGame — session restore', () => {
 
     expect(result.current.gameStarted).toBe(true)
     expect(result.current.players).toHaveLength(5)
+  })
+
+  it('keeps saved ratings when the storage version matches', () => {
+    const players = [makePlayer('Alice'), makePlayer('Bob', 'key', '#3fc1d4')]
+    localStorage.setItem('gamePlayers', JSON.stringify(players))
+    localStorage.setItem('playerRatings', JSON.stringify({ Alice: [2, 1], Bob: [0] }))
+    localStorage.setItem('gameMode', JSON.stringify('couples'))
+
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.ratings).toEqual({ Alice: [2, 1], Bob: [0] })
+    expect(result.current.players).toEqual(players)
   })
 
   it('does not restore a session with fewer than 2 players', () => {
@@ -125,20 +140,80 @@ describe('useGame — session restore', () => {
 
     expect(result.current.gameStarted).toBe(false)
   })
+})
 
-  it('migrates legacy {player1, player2} shape to array', () => {
-    const legacy = {
-      player1: makePlayer('Alice'),
-      player2: makePlayer('Bob', 'key', '#3fc1d4'),
-    }
-    localStorage.setItem('gamePlayers', JSON.stringify(legacy))
-    localStorage.setItem('gameMode', JSON.stringify('couples'))
+describe('useGame — storage version migration', () => {
+  beforeEach(() => {
+    clearGameStorage()
+    i18n.changeLanguage('en')
+  })
+
+  const legacyPlayers = [
+    makePlayer('Alice', 'sun', '#e8615c'),
+    makePlayer('Bob', 'moon', '#4fa8e8'),
+    makePlayer('Carol', 'star', '#5fb37a'),
+  ]
+
+  const seedLegacySession = () => {
+    localStorage.setItem('gamePlayers', JSON.stringify(legacyPlayers))
+    localStorage.setItem('playerRatings', JSON.stringify({ Alice: [5, 4], Bob: [3], Carol: [] }))
+    localStorage.setItem('gameMode', JSON.stringify('friends'))
+  }
+
+  it('clears saved ratings when the storage version is missing', () => {
+    seedLegacySession()
 
     const { result } = renderHook(() => useGame(), { wrapper })
 
-    expect(result.current.players).toHaveLength(2)
-    expect(result.current.players[0].name).toBe('Alice')
-    expect(result.current.players[1].name).toBe('Bob')
+    expect(result.current.ratings).toEqual({ Alice: [], Bob: [], Carol: [] })
+    expect(JSON.parse(localStorage.getItem('playerRatings'))).toEqual({
+      Alice: [],
+      Bob: [],
+      Carol: [],
+    })
+  })
+
+  it('remaps avatars and colors by index and keeps names and mode', () => {
+    seedLegacySession()
+
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.players).toEqual(
+      legacyPlayers.map((p, i) => ({
+        name: p.name,
+        avatar: avatars[i].name,
+        color: colors[i].value,
+      }))
+    )
+    expect(result.current.mode).toBe('friends')
+    expect(result.current.gameStarted).toBe(true)
+    expect(result.current.phase).toBe('selecting-category')
+  })
+
+  it('treats an outdated storage version like a missing one', () => {
+    seedLegacySession()
+    localStorage.setItem('storageVersion', String(STORAGE_VERSION - 1))
+
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.ratings.Alice).toEqual([])
+    expect(result.current.players[0].avatar).toBe(avatars[0].name)
+  })
+
+  it('writes the current storage version', () => {
+    seedLegacySession()
+
+    renderHook(() => useGame(), { wrapper })
+
+    expect(localStorage.getItem('storageVersion')).toBe(String(STORAGE_VERSION))
+  })
+
+  it('writes the version on a fresh install without touching other keys', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(localStorage.getItem('storageVersion')).toBe(String(STORAGE_VERSION))
+    expect(localStorage.getItem('gamePlayers')).toBeNull()
+    expect(result.current.gameStarted).toBe(false)
   })
 })
 
@@ -146,14 +221,15 @@ describe('useGame — sortedPlayers', () => {
   beforeEach(() => {
     clearGameStorage()
     i18n.changeLanguage('en')
+    localStorage.setItem('storageVersion', String(STORAGE_VERSION))
   })
 
-  it('ranks 3 players by average rating descending', () => {
+  it('ranks 3 players by total points descending', () => {
     const threePlayers = [makePlayer('Alice'), makePlayer('Bob'), makePlayer('Carol')]
     const ratings = {
-      Alice: [5, 4, 5], // avg 4.67
-      Bob: [3, 4, 3], // avg 3.33
-      Carol: [5, 5, 5], // avg 5.00
+      Alice: [2, 1, 2],
+      Bob: [1, 0, 1],
+      Carol: [2, 2, 2],
     }
     localStorage.setItem('gamePlayers', JSON.stringify(threePlayers))
     localStorage.setItem('playerRatings', JSON.stringify(ratings))
@@ -162,23 +238,26 @@ describe('useGame — sortedPlayers', () => {
     const { result } = renderHook(() => useGame(), { wrapper })
 
     const sorted = result.current.sortedPlayers
-    expect(sorted[0].name).toBe('Carol')
-    expect(sorted[1].name).toBe('Alice')
-    expect(sorted[2].name).toBe('Bob')
+    expect(sorted.map((p) => p.name)).toEqual(['Carol', 'Alice', 'Bob'])
+    expect(sorted.map((p) => p.total)).toEqual([6, 5, 2])
   })
 
-  it('assigns average 0 to players with no ratings', () => {
-    const players = [makePlayer('X'), makePlayer('Y')]
-    localStorage.setItem('gamePlayers', JSON.stringify(players))
-    localStorage.setItem('playerRatings', JSON.stringify({ X: [], Y: [] }))
-    localStorage.setItem('gameMode', JSON.stringify('couples'))
-
+  it('reflects a submitted vote in the ranking', () => {
     const { result } = renderHook(() => useGame(), { wrapper })
 
-    result.current.sortedPlayers.forEach((p) => {
-      expect(p.average).toBe(0)
-      expect(p.totalRatings).toBe(0)
+    act(() => {
+      result.current.startGame({ players: FOUR_PLAYERS, mode: 'friends' })
     })
+    act(() => {
+      result.current.handleCategorySelect('spark')
+    })
+    act(() => {
+      result.current.submitRating(RATING.good)
+    })
+
+    const [leader] = result.current.sortedPlayers
+    expect(leader).toMatchObject({ name: 'Alice', total: 2, turns: 1 })
+    expect(leader.tally).toEqual({ good: 1, neutral: 0, bad: 0 })
   })
 })
 

@@ -81,36 +81,6 @@
     "defaultInstruction": "{{name}}, responde la pregunta",
     "musicInstruction": "{{name}}, tu oponente reproducirá la canción. ¿Puedes adivinar el artista y título?"
   },
-  "rating": {
-    "justAnswered": "{{name}} acaba de responder",
-    "ratePrompt": "{{rater}}, {{criteria}}",
-    "criteria": {
-      "default": "¿Cómo calificarías esta respuesta?",
-      "music": "Califica la respuesta de tu oponente",
-      "absurdista": "Califica la creatividad del TED Talk y qué tan bien incorporaron un rasgo de ti",
-      "atlasOfMe": "Califica qué tan fuerte es la conexión con el lugar",
-      "dilemma": "Califica la profundidad del razonamiento moral y la justificación de su elección"
-    },
-    "atlas": {
-      "none": "Sin Conexión",
-      "light": "Conexión Ligera",
-      "strong": "Conexión Fuerte"
-    },
-    "music": {
-      "none": "Ninguna",
-      "partial": "Parcial",
-      "perfect": "Perfecta"
-    },
-    "points": {
-      "zero": "0 puntos",
-      "one": "1 punto",
-      "two": "2 puntos"
-    },
-    "legend": {
-      "atlas": "2 pts = Conexión fuerte y específica · 1 pto = Conexión ligera · 0 pts = Sin conexión",
-      "music": "2 pts = Artista + Título correctos · 1 pto = Solo uno · 0 pts = Ninguna coincidencia"
-    }
-  },
   "decade": {
     "heading": "{{name}}, elige una década",
     "headingAction": ", elige una década",
@@ -126,21 +96,45 @@
     "questions_other": "{{count}} preguntas"
   },
   "leaderboard": {
-    "title": "Tabla de Clasificación",
-    "ratings_one": "{{count}} calificación",
-    "ratings_other": "{{count}} calificaciones",
-    "backToGame": "Volver al Juego",
-    "changePlayers": "Cambiar Jugadores"
+    "title": "Tabla de clasificación",
+    "backToGame": "Volver al juego",
+    "changePlayers": "Cambiar jugadores"
   },
   "gameOver": {
     "title": "¡Juego terminado!",
     "subtitle": "Todas las preguntas respondidas",
     "replay": "Jugar de nuevo",
-    "changePlayers": "Cambiar jugadores",
-    "answers_one": "{{count}} respuesta",
-    "answers_other": "{{count}} respuestas"
+    "changePlayers": "Cambiar jugadores"
   },
   "customMode": {},
-  "vote": {},
+  "vote": {
+    "justAnswered": "{{name}} acaba de responder",
+    "ratePrompt": "{{rater}}, {{criteria}}",
+    "criteria": {
+      "default": "¿cómo calificarías esta respuesta?",
+      "music": "califica la respuesta",
+      "absurdista": "califica la creatividad del TED Talk y qué tan bien incorporaron un rasgo de ti",
+      "atlasOfMe": "califica qué tan fuerte es la conexión con el lugar",
+      "dilemma": "califica la profundidad del razonamiento moral y la justificación de su elección"
+    },
+    "good": "Buena",
+    "neutral": "Regular",
+    "bad": "Mala",
+    "hint": {
+      "music": {
+        "good": "Artista y título",
+        "neutral": "Solo uno de los dos",
+        "bad": "Ninguno"
+      },
+      "atlas": {
+        "good": "Conexión fuerte",
+        "neutral": "Conexión ligera",
+        "bad": "Sin conexión"
+      }
+    },
+    "points_one": "{{count}} punto",
+    "points_other": "{{count}} puntos",
+    "tally": "{{good}} buenas, {{neutral}} regulares, {{bad}} malas"
+  },
   "identity": {}
 }

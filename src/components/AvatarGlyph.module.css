@@ -1,3 +1,14 @@
 .glyph {
   transition: transform var(--duration-base) var(--ease-standard);
 }
+
+.detail {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.jewel {
+  fill: var(--accent);
+  stroke: none;
+}

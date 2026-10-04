@@ -40,24 +40,8 @@ export default function Onboarding({ onComplete, prefsSlot }) {
     onComplete({ players: finalPlayers, mode })
   }
 
-  // Bloom colors: first and last player for ambient background
-  const bloom0Color = players[0].color
-  const bloom1Color = players[players.length - 1].color
-
   return (
     <div className={styles.stage}>
-      {/* Ambient background blooms */}
-      <div
-        className={styles.bloom}
-        style={{ '--bloom-color': bloom0Color, '--bloom-x': '20%', '--bloom-y': '30%' }}
-        aria-hidden="true"
-      />
-      <div
-        className={styles.bloom}
-        style={{ '--bloom-color': bloom1Color, '--bloom-x': '80%', '--bloom-y': '65%' }}
-        aria-hidden="true"
-      />
-
       {/* Main onboarding card */}
       <div className={styles.card}>
         {/* Wordmark + prefs at top */}

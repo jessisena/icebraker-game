@@ -81,36 +81,6 @@
     "defaultInstruction": "{{name}}, answer the question",
     "musicInstruction": "{{name}}, your opponent will play the song. Can you guess the artist and title?"
   },
-  "rating": {
-    "justAnswered": "{{name}} just answered",
-    "ratePrompt": "{{rater}}, {{criteria}}",
-    "criteria": {
-      "default": "How would you rate this answer?",
-      "music": "Rate your opponent's answer",
-      "absurdista": "Rate the TED Talk's creativity and how well they incorporated a trait about you",
-      "atlasOfMe": "Rate how strong the connection to the place is",
-      "dilemma": "Rate the depth of the moral reasoning and the justification for their choice"
-    },
-    "atlas": {
-      "none": "No Connection",
-      "light": "Light Connection",
-      "strong": "Strong Connection"
-    },
-    "music": {
-      "none": "None",
-      "partial": "Partial",
-      "perfect": "Perfect"
-    },
-    "points": {
-      "zero": "0 points",
-      "one": "1 point",
-      "two": "2 points"
-    },
-    "legend": {
-      "atlas": "2 pts = Strong, specific connection · 1 pt = Light connection · 0 pts = No connection",
-      "music": "2 pts = Artist + Title correct · 1 pt = Only one · 0 pts = No match"
-    }
-  },
   "decade": {
     "heading": "{{name}}, choose a decade",
     "headingAction": ", choose a decade",
@@ -127,20 +97,44 @@
   },
   "leaderboard": {
     "title": "Leaderboard",
-    "ratings_one": "{{count}} rating",
-    "ratings_other": "{{count}} ratings",
-    "backToGame": "Back to Game",
-    "changePlayers": "Change Players"
+    "backToGame": "Back to game",
+    "changePlayers": "Change players"
   },
   "gameOver": {
     "title": "Game over!",
     "subtitle": "All questions answered",
     "replay": "Play again",
-    "changePlayers": "Change players",
-    "answers_one": "{{count}} answer",
-    "answers_other": "{{count}} answers"
+    "changePlayers": "Change players"
   },
   "customMode": {},
-  "vote": {},
+  "vote": {
+    "justAnswered": "{{name}} just answered",
+    "ratePrompt": "{{rater}}, {{criteria}}",
+    "criteria": {
+      "default": "how would you rate this answer?",
+      "music": "rate the answer",
+      "absurdista": "rate the TED Talk's creativity and how well they incorporated a trait about you",
+      "atlasOfMe": "rate how strong the connection to the place is",
+      "dilemma": "rate the depth of the moral reasoning and the justification for their choice"
+    },
+    "good": "Good",
+    "neutral": "Neutral",
+    "bad": "Bad",
+    "hint": {
+      "music": {
+        "good": "Artist and title",
+        "neutral": "Only one of them",
+        "bad": "Neither"
+      },
+      "atlas": {
+        "good": "Strong connection",
+        "neutral": "Light connection",
+        "bad": "No connection"
+      }
+    },
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
+    "tally": "{{good}} good, {{neutral}} neutral, {{bad}} bad"
+  },
   "identity": {}
 }

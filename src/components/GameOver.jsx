@@ -23,8 +23,9 @@ export default function GameOver({ players, onReplay, onReset }) {
               <span className={styles.name} style={{ color: player.color }}>
                 {player.name}
               </span>
-              <span className={styles.score}>
-                {player.average} · {t('gameOver.answers', { count: player.totalRatings })}
+              <span className={styles.score}>{t('vote.points', { count: player.total })}</span>
+              <span className={styles.tally} role="img" aria-label={t('vote.tally', player.tally)}>
+                👍 {player.tally.good} · 😐 {player.tally.neutral} · 👎 {player.tally.bad}
               </span>
             </div>
           </li>
@@ -41,8 +42,20 @@ export default function GameOver({ players, onReplay, onReset }) {
   )
 }
 
+const rankedPlayerShape = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  avatar: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  total: PropTypes.number.isRequired,
+  tally: PropTypes.shape({
+    good: PropTypes.number.isRequired,
+    neutral: PropTypes.number.isRequired,
+    bad: PropTypes.number.isRequired,
+  }).isRequired,
+})
+
 GameOver.propTypes = {
-  players: PropTypes.arrayOf(PropTypes.object).isRequired,
+  players: PropTypes.arrayOf(rankedPlayerShape).isRequired,
   onReplay: PropTypes.func.isRequired,
   onReset: PropTypes.func.isRequired,
 }

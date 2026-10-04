@@ -9,8 +9,6 @@
     "step1Helper": "Add all players and set up their details",
     "nameLabel": "Your name",
     "namePlaceholder": "Type a name…",
-    "avatarLabel": "Avatar",
-    "colorLabel": "Colour",
     "back": "← Back",
     "next": "Next →",
     "startButton": "Let's play!",
@@ -142,5 +140,9 @@
   },
   "customMode": {},
   "vote": {},
-  "identity": {}
+  "identity": {
+    "deckHeading": "{{name}}, pick your card",
+    "colorHeading": "And a colour",
+    "takenBy": "{{label}}, taken by {{owner}}"
+  }
 }

@@ -96,24 +96,24 @@ All category accents pass 3:1 on the dark ground. In Lapis Day most fall below 3
 shown on tinted chips next to text, so they are decorative there, but they should not carry
 meaning alone in the light theme.
 
-**Player colors** (6 jewel tones — values are fixed in `src/data/options.js` and applied inline;
-the `--player-*` tokens mirror them for CSS use)
+**Player colors** (6 jewel tones). `src/data/options.js` stores each player colour as its token,
+e.g. `var(--player-jade)`, and components apply it inline, so every theme supplies its own shade.
 
-| Name | Token | Value | Dark vs `--bg` / `--surface` | Light vs `--bg` / `--surface` |
-|---|---|---|---|---|
-| Garnet | `--player-garnet` | `#E0525E` | 4.57 / 3.95 | 3.35 / 3.79 |
-| Saffron | `--player-saffron` | `#EDB140` | 9.04 / 7.83 | 1.69 / 1.92 |
-| Jade | `--player-jade` | `#42B48F` | 6.72 / 5.82 | 2.28 / 2.57 |
-| Turquoise | `--player-turquoise` | `#3FC1D4` | 8.07 / 6.99 | 1.90 / 2.15 |
-| Amethyst | `--player-amethyst` | `#A97BF0` | 5.59 / 4.84 | 2.74 / 3.10 |
-| Rose | `--player-rose` | `#EE8FB8` | 7.63 / 6.61 | 2.01 / 2.27 |
+| Name | Token | Dark value | Dark vs `--bg` / `--surface` | Light value | Light vs `--bg` / `--surface` |
+|---|---|---|---|---|---|
+| Garnet | `--player-garnet` | `#E0525E` | 4.57 / 3.95 | `#C03442` | 4.87 / 5.51 |
+| Saffron | `--player-saffron` | `#EDB140` | 9.04 / 7.83 | `#8A6006` | 4.94 / 5.59 |
+| Jade | `--player-jade` | `#42B48F` | 6.72 / 5.82 | `#1B7558` | 4.97 / 5.63 |
+| Turquoise | `--player-turquoise` | `#3FC1D4` | 8.07 / 6.99 | `#0E7280` | 4.97 / 5.62 |
+| Amethyst | `--player-amethyst` | `#A97BF0` | 5.59 / 4.84 | `#7A4FD0` | 4.81 / 5.45 |
+| Rose | `--player-rose` | `#EE8FB8` | 7.63 / 6.61 | `#B23F73` | 4.82 / 5.45 |
 
 Dark theme: every player colour passes 3:1 for UI and 4.5:1 as text on `--bg`; on `--surface`,
 Garnet (3.95) is below 4.5:1, so Garnet player names on cards meet only the large-text threshold.
 
-Light theme: player names are rendered as coloured text, and none of the six reach 4.5:1 on
-Lapis Day; Saffron, Jade, Turquoise and Rose are also below 3:1. There is currently no
-per-theme player colour mechanism — player names in the light theme have low contrast.
+Light theme: the darker shades pass 4.5:1 as text on both `--bg` and `--surface`.
+On a selected card (filled with the player colour) the glyph and title use `--bg`, which flips with
+the theme, so they stay readable on both the light jewel fills and the dark ones.
 
 ---
 

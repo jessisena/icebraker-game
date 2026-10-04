@@ -8,12 +8,12 @@ export const avatars = [
   { name: 'moon', labelKey: 'setup.avatars.moon' },
 ]
 
-/* Six jewel tones tuned for the Lapis Night palette */
+/* Six jewel tones; values are tokens so each theme can supply a readable shade */
 export const colors = [
-  { name: 'garnet', value: '#e0525e', labelKey: 'setup.colors.garnet' },
-  { name: 'saffron', value: '#edb140', labelKey: 'setup.colors.saffron' },
-  { name: 'jade', value: '#42b48f', labelKey: 'setup.colors.jade' },
-  { name: 'turquoise', value: '#3fc1d4', labelKey: 'setup.colors.turquoise' },
-  { name: 'amethyst', value: '#a97bf0', labelKey: 'setup.colors.amethyst' },
-  { name: 'rose', value: '#ee8fb8', labelKey: 'setup.colors.rose' },
+  { name: 'garnet', value: 'var(--player-garnet)', labelKey: 'setup.colors.garnet' },
+  { name: 'saffron', value: 'var(--player-saffron)', labelKey: 'setup.colors.saffron' },
+  { name: 'jade', value: 'var(--player-jade)', labelKey: 'setup.colors.jade' },
+  { name: 'turquoise', value: 'var(--player-turquoise)', labelKey: 'setup.colors.turquoise' },
+  { name: 'amethyst', value: 'var(--player-amethyst)', labelKey: 'setup.colors.amethyst' },
+  { name: 'rose', value: 'var(--player-rose)', labelKey: 'setup.colors.rose' },
 ]

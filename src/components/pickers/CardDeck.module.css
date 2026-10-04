@@ -95,6 +95,11 @@
   color: var(--bg);
 }
 
+/* Brass details disappear on a jewel fill, so draw them in the card's ink */
+.selected .glyph {
+  --accent: var(--bg);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .card {
     transition:

@@ -55,7 +55,9 @@ export default function CategorySelector({
               <div
                 className={styles.countBadge}
                 style={{
-                  backgroundColor: isEmpty ? 'var(--surface-raised)' : `${category.color}22`,
+                  backgroundColor: isEmpty
+                    ? 'var(--surface-raised)'
+                    : `color-mix(in srgb, ${category.color} 13%, transparent)`,
                   color: isEmpty ? 'var(--text-muted)' : category.color,
                 }}
               >

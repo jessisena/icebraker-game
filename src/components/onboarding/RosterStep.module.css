@@ -152,7 +152,7 @@
 
 .inputError:focus {
   border-color: var(--cat-heat);
-  box-shadow: 0 0 0 3px rgba(232, 97, 92, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cat-heat) 15%, transparent);
 }
 
 .error {
@@ -217,7 +217,7 @@
 }
 
 .removeBtn:hover {
-  background-color: rgba(232, 97, 92, 0.1);
+  background-color: color-mix(in srgb, var(--cat-heat) 10%, transparent);
 }
 
 .removeBtn:focus-visible {

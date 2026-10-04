@@ -5,6 +5,7 @@ import useGame from './hooks/useGame'
 import useLocalStorage from './hooks/useLocalStorage'
 import Onboarding from './components/onboarding/Onboarding'
 import ModeSelector from './components/ModeSelector'
+import CustomCategoryPicker from './components/CustomCategoryPicker'
 import CategorySelector from './components/CategorySelector'
 import DecadeSelector from './components/DecadeSelector'
 import QuestionCard from './components/QuestionCard'
@@ -96,6 +97,17 @@ function App() {
             currentMode={game.mode}
             onModeSelect={game.selectMode}
             playerCount={game.players.length}
+          />
+        )}
+
+        {game.phase === 'selecting-custom-categories' && (
+          <CustomCategoryPicker
+            defaultSelected={game.customCategories}
+            onConfirm={game.confirmCustomCategories}
+            confirmLabel={t('customMode.save')}
+            counts={game.calculateAvailableCounts()}
+            onBack={game.showModeSelector}
+            framed
           />
         )}
 

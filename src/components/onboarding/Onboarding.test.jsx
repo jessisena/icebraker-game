@@ -389,7 +389,7 @@ describe('Onboarding — custom mode', () => {
   })
 })
 
-describe('Onboarding — identity picker (cards and colours)', () => {
+describe('Onboarding — identity picker (cards and colors)', () => {
   beforeEach(() => {
     i18n.changeLanguage('en')
   })
@@ -407,7 +407,7 @@ describe('Onboarding — identity picker (cards and colours)', () => {
     expect(screen.getByRole('radio', { name: 'The Eye' })).toBeChecked()
   })
 
-  it("does not let a player pick another player's colour", async () => {
+  it("does not let a player pick another player's color", async () => {
     const user = userEvent.setup()
     renderOnboarding()
     await pickMode(user, /couple/i)
@@ -449,7 +449,7 @@ describe('Onboarding — identity picker (cards and colours)', () => {
     expect(screen.getByRole('radio', { name: 'The Moon' })).toBeChecked()
   })
 
-  it('skips taken colours when moving with the arrow keys', async () => {
+  it('skips taken colors when moving with the arrow keys', async () => {
     const user = userEvent.setup()
     renderOnboarding()
     await pickMode(user, /couple/i)
@@ -459,7 +459,7 @@ describe('Onboarding — identity picker (cards and colours)', () => {
     expect(screen.getByRole('radio', { name: 'Amethyst' })).toBeChecked()
   })
 
-  it('gives a newly added player the first free card and colour', async () => {
+  it('gives a newly added player the first free card and color', async () => {
     const user = userEvent.setup()
     renderOnboarding()
     await pickMode(user, /friends/i)

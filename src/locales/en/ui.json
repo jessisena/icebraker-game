@@ -148,7 +148,7 @@
   },
   "identity": {
     "deckHeading": "{{name}}, pick your card",
-    "colorHeading": "And a colour",
+    "colorHeading": "And a color",
     "takenBy": "{{label}}, taken by {{owner}}"
   }
 }

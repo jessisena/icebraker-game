@@ -49,7 +49,7 @@
   pointer-events: none;
 }
 
-/* Held by another player: hollow tile in its colour with the owner's initial */
+/* Held by another player: hollow tile in its color with the owner's initial */
 .taken {
   cursor: not-allowed;
   background-color: color-mix(in srgb, var(--swatch-color) 18%, transparent);

@@ -83,7 +83,7 @@
   white-space: nowrap;
 }
 
-/* The one bold moment: the chosen card fills with the player's colour and lifts */
+/* The one bold moment: the chosen card fills with the player's color and lifts */
 .selected {
   background-color: var(--card-color);
   border-color: var(--card-color);

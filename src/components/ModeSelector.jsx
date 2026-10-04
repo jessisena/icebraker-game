@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import styles from './ModeSelector.module.css'
 
-const MODES = [{ key: 'couples' }, { key: 'friends' }, { key: 'team' }]
+const MODES = [{ key: 'couples' }, { key: 'friends' }, { key: 'team' }, { key: 'custom' }]
 
 export default function ModeSelector({ currentMode, onModeSelect, playerCount = 2 }) {
   const { t } = useTranslation()
@@ -23,8 +23,10 @@ export default function ModeSelector({ currentMode, onModeSelect, playerCount = 
                 currentMode === key ? styles.active : '',
                 isDisabled ? styles.disabled : '',
               ].join(' ')}
+              type="button"
               onClick={() => !isDisabled && onModeSelect(key)}
               disabled={isDisabled}
+              aria-pressed={currentMode === key}
             >
               <span className={styles.label}>{t(`mode.${key}`)}</span>
               <span className={styles.desc}>{t(`mode.${key}_desc`)}</span>

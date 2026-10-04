@@ -48,7 +48,7 @@ describe('Onboarding — step 1: mode selection', () => {
   it('shows the player count badge on each mode card', () => {
     renderOnboarding()
     expect(screen.getByText(/2 players/i)).toBeInTheDocument()
-    expect(screen.getAllByText(/2–6 players/i)).toHaveLength(2)
+    expect(screen.getAllByText(/2–6 players/i)).toHaveLength(3)
   })
 
   it('Next is disabled until a mode is selected', () => {
@@ -279,5 +279,112 @@ describe('Onboarding — happy path', () => {
     expect(mode).toBe('friends')
     expect(players).toHaveLength(4)
     expect(players.map((p) => p.name)).toEqual(names)
+  })
+})
+
+describe('Onboarding — custom mode', () => {
+  beforeEach(() => {
+    i18n.changeLanguage('en')
+  })
+
+  async function pickCustom(user) {
+    await user.click(screen.getByRole('button', { name: /custom/i }))
+    await user.click(screen.getByRole('button', { name: /next/i }))
+    await screen.findByText(/step 2 of 3/i)
+  }
+
+  async function fillTwoPlayers(user) {
+    await fillExpandedName(user, 'Alice')
+    await expandRow(user, 2)
+    await fillExpandedName(user, 'Bob')
+  }
+
+  it('skips the category step for non-custom modes', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /team/i)
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    expect(screen.getByLabelText(/your name/i)).toBeInTheDocument()
+  })
+
+  it('shows all 9 categories as checkboxes after picking Custom', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickCustom(user)
+    expect(screen.getAllByRole('checkbox')).toHaveLength(9)
+    expect(screen.getByRole('checkbox', { name: /the heat/i })).not.toBeChecked()
+  })
+
+  it('disables Next with no categories ticked and explains why', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickCustom(user)
+    expect(screen.getByRole('button', { name: /next/i })).toBeDisabled()
+    expect(screen.getByText(/pick at least one category/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('checkbox', { name: /the heat/i }))
+    expect(screen.getByRole('button', { name: /next/i })).not.toBeDisabled()
+
+    await user.click(screen.getByRole('checkbox', { name: /the heat/i }))
+    expect(screen.getByRole('button', { name: /next/i })).toBeDisabled()
+  })
+
+  it('toggles a category with the keyboard', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickCustom(user)
+    const spark = screen.getByRole('checkbox', { name: /the spark/i })
+    spark.focus()
+    await user.keyboard(' ')
+    expect(spark).toBeChecked()
+  })
+
+  it('back from roster returns to categories with the selection kept', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickCustom(user)
+    await user.click(screen.getByRole('checkbox', { name: /the mirror/i }))
+    await user.click(screen.getByRole('button', { name: /next/i }))
+    await screen.findByText(/step 3 of 3/i)
+
+    await user.click(screen.getByRole('button', { name: /back/i }))
+    expect(await screen.findByText(/step 2 of 3/i)).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /the mirror/i })).toBeChecked()
+  })
+
+  it('calls onComplete with the custom categories', async () => {
+    const onComplete = vi.fn()
+    const user = userEvent.setup()
+    renderOnboarding(onComplete)
+    await pickCustom(user)
+    await user.click(screen.getByRole('checkbox', { name: /the heat/i }))
+    await user.click(screen.getByRole('checkbox', { name: /the dilemma/i }))
+    await user.click(screen.getByRole('button', { name: /next/i }))
+    await screen.findByText(/step 3 of 3/i)
+
+    await fillTwoPlayers(user)
+    await user.click(screen.getByRole('button', { name: /let's play/i }))
+
+    expect(onComplete).toHaveBeenCalledOnce()
+    const { mode, customCategories } = onComplete.mock.calls[0][0]
+    expect(mode).toBe('custom')
+    expect(customCategories).toEqual(['heat', 'dilemma'])
+  })
+
+  it('sends an empty selection when switching away from Custom', async () => {
+    const onComplete = vi.fn()
+    const user = userEvent.setup()
+    renderOnboarding(onComplete)
+    await pickCustom(user)
+    await user.click(screen.getByRole('checkbox', { name: /the heat/i }))
+    await user.click(screen.getByRole('button', { name: /back/i }))
+    await pickMode(user, /friends/i)
+
+    await fillTwoPlayers(user)
+    await user.click(screen.getByRole('button', { name: /let's play/i }))
+
+    const { mode, customCategories } = onComplete.mock.calls[0][0]
+    expect(mode).toBe('friends')
+    expect(customCategories).toEqual([])
   })
 })

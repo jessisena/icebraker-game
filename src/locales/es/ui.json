@@ -62,7 +62,10 @@
     "friends_players": "2–6 jugadores",
     "team_players": "2–6 jugadores",
     "current": "Modo actual: {{mode}}",
-    "couplesDisabled": "Modo Pareja es para 2 jugadores — reduce el grupo primero"
+    "couplesDisabled": "Modo Pareja es para 2 jugadores — reduce el grupo primero",
+    "custom": "🧩 Personalizado",
+    "custom_desc": "Elegid vuestra propia mezcla entre todas las categorías",
+    "custom_players": "2–6 jugadores"
   },
   "toast": {
     "categoryExhausted": "Ya has respondido todas las preguntas de esta categoría. Elige otra.",
@@ -106,7 +109,16 @@
     "replay": "Jugar de nuevo",
     "changePlayers": "Cambiar jugadores"
   },
-  "customMode": {},
+  "customMode": {
+    "heading": "Elegid las categorías",
+    "helper": "Marcad las que queréis jugar. Podéis cambiarlas durante la partida.",
+    "minHelper": "Elige al menos una categoría para continuar",
+    "selected_one": "{{count}} categoría seleccionada",
+    "selected_other": "{{count}} categorías seleccionadas",
+    "musicHint": "Adivina canciones por década",
+    "timer": "⏱ {{seconds}} s",
+    "save": "Guardar categorías"
+  },
   "vote": {
     "justAnswered": "{{name}} acaba de responder",
     "ratePrompt": "{{rater}}, {{criteria}}",

@@ -45,6 +45,11 @@ export default function useGame() {
   const [players, setPlayers, removePlayers] = useLocalStorage('gamePlayers', null)
   const [ratings, setRatings, removeRatings] = useLocalStorage('playerRatings', {})
   const [mode, setMode, removeMode] = useLocalStorage('gameMode', null)
+  const [storedCustomCategories, setCustomCategories, removeCustomCategories] = useLocalStorage(
+    'gameCustomCategories',
+    []
+  )
+  const customCategories = storedCustomCategories ?? []
   const [gameStarted, setGameStarted] = useState(false)
   const [phase, setPhase] = useState('selecting-mode')
   const [currentPlayer, setCurrentPlayer] = useState(0)
@@ -78,8 +83,10 @@ export default function useGame() {
     setPhase(mode ? 'selecting-category' : 'selecting-mode')
   }, [players]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const isInMode = ([key, cat]) =>
+    mode === 'custom' ? customCategories.includes(key) : cat.modes?.includes(mode)
   const filteredCategories = mode
-    ? Object.fromEntries(Object.entries(categories).filter(([, cat]) => cat.modes?.includes(mode)))
+    ? Object.fromEntries(Object.entries(categories).filter(isInMode))
     : categories
 
   const calculateAvailableCounts = () => {
@@ -147,10 +154,11 @@ export default function useGame() {
     })
   }
 
-  const startGame = ({ players: playerArray, mode: gameMode }) => {
+  const startGame = ({ players: playerArray, mode: gameMode, customCategories: picked = [] }) => {
     setPlayers(playerArray)
     setRatings(Object.fromEntries(playerArray.map((p) => [p.name, []])))
     setMode(gameMode)
+    setCustomCategories(gameMode === 'custom' ? picked : [])
     setGameStarted(true)
     setCategoryQuestions({ ...INITIAL_QUESTIONS })
     setCurrentPlayer(0)
@@ -158,7 +166,17 @@ export default function useGame() {
   }
 
   const selectMode = (selectedMode) => {
+    if (selectedMode === 'custom') {
+      withTransition(() => setPhase('selecting-custom-categories'))
+      return
+    }
     setMode(selectedMode)
+    withTransition(() => setPhase('selecting-category'))
+  }
+
+  const confirmCustomCategories = (picked) => {
+    setCustomCategories(picked)
+    setMode('custom')
     withTransition(() => setPhase('selecting-category'))
   }
 
@@ -169,6 +187,7 @@ export default function useGame() {
     removePlayers()
     removeRatings()
     removeMode()
+    removeCustomCategories()
     setCategoryQuestions({ ...INITIAL_QUESTIONS })
     setCurrentPlayer(0)
     setPhase('selecting-mode')
@@ -267,7 +286,10 @@ export default function useGame() {
     setSelectedDecade(null)
 
     withTransition(() => {
-      const total = Object.values(categoryQuestions).reduce((s, a) => s + a.length, 0)
+      const total = Object.keys(filteredCategories).reduce(
+        (sum, key) => sum + (categoryQuestions[key]?.length || 0),
+        0
+      )
       if (total === 0) {
         setPhase('game-over')
         return
@@ -303,10 +325,12 @@ export default function useGame() {
     showLeaderboard,
     ratings,
     mode,
+    customCategories,
     filteredCategories,
     sortedPlayers,
     startGame,
     selectMode,
+    confirmCustomCategories,
     showModeSelector,
     resetGame,
     replayGame,

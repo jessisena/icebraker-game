@@ -55,12 +55,15 @@
     "couples": "💞 Couple",
     "friends": "🎉 Friends",
     "team": "💼 Team",
+    "custom": "🧩 Custom",
     "couples_desc": "Intimate questions to get to know each other deeply",
     "friends_desc": "Fun questions for groups of friends",
     "team_desc": "Questions for teams and professional settings",
+    "custom_desc": "Pick your own mix from every category",
     "couples_players": "2 players",
     "friends_players": "2–6 players",
     "team_players": "2–6 players",
+    "custom_players": "2–6 players",
     "current": "Current mode: {{mode}}",
     "couplesDisabled": "Couples mode is for 2 players — reduce the group first"
   },
@@ -140,7 +143,16 @@
     "answers_one": "{{count}} answer",
     "answers_other": "{{count}} answers"
   },
-  "customMode": {},
+  "customMode": {
+    "heading": "Choose your categories",
+    "helper": "Tick the ones you want to play. You can change them during the game.",
+    "minHelper": "Pick at least one category to continue",
+    "selected_one": "{{count}} category selected",
+    "selected_other": "{{count}} categories selected",
+    "musicHint": "Guess songs by decade",
+    "timer": "⏱ {{seconds}} s",
+    "save": "Save categories"
+  },
   "vote": {},
   "identity": {}
 }

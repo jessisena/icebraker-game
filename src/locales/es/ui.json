@@ -55,12 +55,15 @@
     "couples": "💞 Pareja",
     "friends": "🎉 Amigos",
     "team": "💼 Equipo",
+    "custom": "🧩 Personalizado",
     "couples_desc": "Preguntas íntimas para conocerse en profundidad",
     "friends_desc": "Preguntas divertidas para grupos de amigos",
     "team_desc": "Preguntas para equipos y entornos profesionales",
+    "custom_desc": "Elegid vuestra propia mezcla entre todas las categorías",
     "couples_players": "2 jugadores",
     "friends_players": "2–6 jugadores",
     "team_players": "2–6 jugadores",
+    "custom_players": "2–6 jugadores",
     "current": "Modo actual: {{mode}}",
     "couplesDisabled": "Modo Pareja es para 2 jugadores — reduce el grupo primero"
   },
@@ -140,7 +143,16 @@
     "answers_one": "{{count}} respuesta",
     "answers_other": "{{count}} respuestas"
   },
-  "customMode": {},
+  "customMode": {
+    "heading": "Elegid las categorías",
+    "helper": "Marcad las que queréis jugar. Podéis cambiarlas durante la partida.",
+    "minHelper": "Elige al menos una categoría para continuar",
+    "selected_one": "{{count}} categoría seleccionada",
+    "selected_other": "{{count}} categorías seleccionadas",
+    "musicHint": "Adivina canciones por década",
+    "timer": "⏱ {{seconds}} s",
+    "save": "Guardar categorías"
+  },
   "vote": {},
   "identity": {}
 }

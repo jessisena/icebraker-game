@@ -7,23 +7,29 @@ See `docs/` for the full redesign plan and design system reference.
 ## Project map
 
 - `src/App.jsx` — Shell: renders onboarding or the active game phase; all game logic is in `useGame`
-- `src/hooks/useGame.js` — All game state and actions (phase, players array, ratings, categoryQuestions, currentPlayer, mode)
+- `src/hooks/useGame.js` — All game state and actions (phase, players array, ratings, categoryQuestions, currentPlayer, mode, customCategories)
+- `src/game/scoring.js` — `rankPlayers(players, ratings)`: total points, 👍/😐/👎 tally, turns; sorted for the leaderboard
 - `src/components/` — Game UI
-  - `onboarding/Onboarding.jsx` — 2-step wizard: (0) mode, (1) roster
-  - `onboarding/ModeStep.jsx` — Mode picker (Couples/Friends/Team)
-  - `onboarding/RosterStep.jsx` — Accordion player list (2–6 players); validates names; add/remove rows
-  - `onboarding/IdentityCard.jsx` — Avatar + glow ring preview card
+  - `onboarding/Onboarding.jsx` — Wizard: mode → categories (Custom only) → roster
+  - `onboarding/ModeStep.jsx` — Mode picker (Couples/Friends/Team/Custom)
+  - `onboarding/CategoryStep.jsx` — Wraps `CustomCategoryPicker` for the Custom onboarding step
+  - `onboarding/RosterStep.jsx` — Accordion player list (2–6 players); validates names; add/remove rows; glyphs and colors are unique per player
   - `CategorySelector.jsx` — Category grid; current player picks a category each turn
+  - `CustomCategoryPicker.jsx` — Checklist of all 9 categories (min 1); used in onboarding and mid-game
   - `DecadeSelector.jsx` — Decade picker for music-trivia category
   - `QuestionCard.jsx` — Question display, proceed/skip buttons, optional countdown timer
-  - `RatingPanel.jsx` — Group consensus rating: 1–5 stars (or 0–2 points for music-trivia/atlasOfMe); rater label lists all non-answering players via `Intl.ListFormat`
+  - `RatingPanel.jsx` — Group consensus vote: Good / Neutral / Bad (2/1/0) in every category; music-trivia and atlasOfMe show per-button hints; rater label lists all non-answering players via `Intl.ListFormat`
   - `CountdownTimer.jsx` — SVG ring timer, used for absurdista (90s) and atlasOfMe (30s)
-  - `ModeSelector.jsx` — Mid-game mode picker; Couples disabled when group > 2
-  - `Leaderboard.jsx` — Sorted by average rating
-  - `pickers/` — Avatar and color selection components
+  - `ModeSelector.jsx` — Mid-game mode picker; Couples disabled when group > 2; Custom opens the category picker
+  - `Leaderboard.jsx` / `GameOver.jsx` — Ranked by total points with a 👍/😐/👎 tally
+  - `AvatarGlyph.jsx` — Six Arcana emblem SVGs (eye, key, hand, wheel, crown, moon); brass details use `--accent`
+  - `pickers/CardDeck.jsx` — Scroll-snap deck of 2:3 glyph cards; taken cards show their owner
+  - `pickers/ColorPicker.jsx` — Player color swatches; taken colors show the owner's initial
+  - `pickers/roving.js` — Arrow-key navigation that skips taken options
 - `src/hooks/useLocalStorage.js` — Custom hook returning `[state, setState, remove]`, auto-syncs with localStorage
 - `src/assets/questions.js` — Question data: ~245 text questions + ~180 songs across 9 categories
-- `src/data/options.js` — 6 avatars and 6 colors (one of each per player at 6-player max)
+- `src/data/options.js` — 6 avatars and 6 colors (one of each per player at 6-player max); color values are `var(--player-*)` tokens so each theme supplies its own shade
+- `src/data/ratings.js` — `RATING` vote values and `STORAGE_VERSION` (bump when the persisted shape changes; stale ratings are cleared on load)
 - `src/styles/tokens.css` — Design tokens (colors, spacing, typography)
 
 ## Commands
@@ -41,19 +47,21 @@ See `docs/` for the full redesign plan and design system reference.
 
 <important if="you are modifying App.jsx or working with game flow">
 
-Five-phase state machine controlled by `phase`:
+Phase state machine controlled by `phase`:
 
 1. **selecting-mode** — Shown mid-game when "Cambiar Modo" is tapped; `ModeSelector` renders
+   - **selecting-custom-categories** — Custom picked mid-game; `CustomCategoryPicker` renders with the current selection ticked
 2. **selecting-category** — Current player picks a category card
 3. **selecting-decade** — Only for `decadesTape` (music trivia): current player picks a decade
 4. **showing-question** — Question displayed; current player answers; optional countdown timer
-5. **showing-rating** — All other players rate by consensus (one tap); 1–5 stars or 0–2 points
+5. **showing-rating** — All other players vote by consensus (one tap): Good / Neutral / Bad
+6. **game-over** — Reached when every pool in the active `filteredCategories` is empty
 
 After rating, `currentPlayer` advances round-robin `(currentPlayer + 1) % players.length` and returns to `selecting-category`.
 
 Game state lives in `src/hooks/useGame.js`:
 - `players` — Array of `{name, avatar, color}` objects, 2–6 entries (persisted via `gamePlayers` key)
-- `ratings` — Object mapping player names to arrays of ratings (persisted via `playerRatings` key)
+- `ratings` — Object mapping player names to arrays of vote values 2/1/0 (persisted via `playerRatings` key)
 - `categoryQuestions` — Object mapping category keys to remaining question arrays (shrinks as used; reset on `startGame`)
 - `currentPlayer` — Index into the `players` array (0-based)
 - `phase` — Controls the state machine
@@ -61,11 +69,12 @@ Game state lives in `src/hooks/useGame.js`:
 - `selectedCategory` — Key of the current category
 - `selectedDecade` — Decade number (for music trivia only)
 - `timerActive` — Whether the countdown is running
-- `mode` — `'couples' | 'friends' | 'team'` (persisted via `gameMode` key)
+- `mode` — `'couples' | 'friends' | 'team' | 'custom'` (persisted via `gameMode` key)
+- `customCategories` — Category keys chosen for Custom mode (persisted via `gameCustomCategories` key)
 
-Key actions: `startGame({players, mode})`, `selectMode(mode)`, `showModeSelector()`, `submitRating(value)`, `replayGame()`, `resetGame()`.
+Key actions: `startGame({players, mode, customCategories})`, `selectMode(mode)`, `confirmCustomCategories(keys)`, `showModeSelector()`, `submitRating(value)`, `replayGame()`, `resetGame()`.
 
-`onComplete` payload from `Onboarding` is `{ players: [{name, avatar, color}, ...], mode }`.
+`onComplete` payload from `Onboarding` is `{ players: [{name, avatar, color}, ...], mode, customCategories }`.
 
 </important>
 
@@ -78,10 +87,9 @@ Music trivia shape: `[year, artist, title]` (reformatted at runtime in `handleDe
 
 Category metadata is in the `categories` export at the top of the file. Each entry has:
 - `key`, `name`, `description`, `icon`, `color`
-- `modes: ['couples','friends','team']` — which modes include this category
+- `modes: ['couples','friends','team']` — which modes include this category (Custom ignores this and uses the player's selection)
 - Optional: `timerSeconds` — activates the countdown timer
 - Optional: `specialBehavior: 'music-trivia'` — routes to decade picker
-- Optional: `scoringType: 'points'` — uses 0/1/2 scoring in RatingPanel instead of 1–5 stars
 - Optional: `specialInstructions` — shown on the question card
 
 When selected, a question is removed from the pool to avoid repetition.
@@ -107,7 +115,7 @@ Both Spanish and English are supported via `react-i18next`. Locale files: `src/l
 
 <important if="you are working with avatars, player configuration, or the player setup screen">
 
-Avatar sources are imported and mapped in `src/data/options.js` (6 avatars, 6 colors). The onboarding wizard assigns a distinct default avatar and color to each player. Name validation is inline in `RosterStep.jsx` — no `alert()`. Players must have unique non-empty names.
+Avatar ids and colors are defined in `src/data/options.js` (6 avatars, 6 colors); glyph SVGs live in `AvatarGlyph.jsx`. Each player gets a distinct avatar and color — taken options are disabled in the card deck and color picker. Name validation is inline in `RosterStep.jsx` — no `alert()`. Players must have unique non-empty names.
 
 </important>
 

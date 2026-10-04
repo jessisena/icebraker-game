@@ -19,7 +19,6 @@ export const categories = {
     icon: '🎵',
     color: '#d96ba0',
     specialBehavior: 'music-trivia',
-    scoringType: 'points',
     modes: ['couples', 'friends', 'team'],
   },
   atlasOfMe: {
@@ -27,7 +26,6 @@ export const categories = {
     icon: '🗺️',
     color: '#3fa9a0',
     timerSeconds: 30,
-    scoringType: 'points',
     modes: ['couples', 'friends', 'team'],
   },
   dilemma: { key: 'dilemma', icon: '⚖️', color: '#a17f72', modes: ['couples', 'friends', 'team'] },

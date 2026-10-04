@@ -53,7 +53,7 @@
 .card:hover:not(.empty) {
   transform: translateY(-3px);
   border-color: var(--brand);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.25);
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--brand) 25%, transparent);
 }
 
 .card:active:not(.empty) {

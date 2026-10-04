@@ -206,3 +206,107 @@ describe('useGame — replayGame', () => {
     }
   })
 })
+
+describe('useGame — custom mode', () => {
+  beforeEach(() => {
+    clearGameStorage()
+    i18n.changeLanguage('en')
+  })
+
+  it('limits filteredCategories to the custom selection', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    act(() => {
+      result.current.startGame({
+        players: FOUR_PLAYERS,
+        mode: 'custom',
+        customCategories: ['heat'],
+      })
+    })
+
+    expect(Object.keys(result.current.filteredCategories)).toEqual(['heat'])
+    expect(JSON.parse(localStorage.getItem('gameCustomCategories'))).toEqual(['heat'])
+  })
+
+  it('ignores customCategories for non-custom modes', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    act(() => {
+      result.current.startGame({ players: FOUR_PLAYERS, mode: 'team', customCategories: ['heat'] })
+    })
+
+    expect(result.current.customCategories).toEqual([])
+    expect(result.current.filteredCategories.heat).toBeUndefined()
+  })
+
+  it('routes mid-game Custom to the category picker and keeps the previous selection', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    act(() => {
+      result.current.startGame({
+        players: FOUR_PLAYERS,
+        mode: 'custom',
+        customCategories: ['spark', 'roots'],
+      })
+    })
+    act(() => result.current.showModeSelector())
+    act(() => result.current.selectMode('custom'))
+
+    expect(result.current.phase).toBe('selecting-custom-categories')
+    expect(result.current.customCategories).toEqual(['spark', 'roots'])
+  })
+
+  it('confirming a new selection switches to custom mode', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    act(() => {
+      result.current.startGame({ players: FOUR_PLAYERS, mode: 'friends' })
+    })
+    act(() => result.current.selectMode('custom'))
+    act(() => result.current.confirmCustomCategories(['dilemma', 'heat']))
+
+    expect(result.current.mode).toBe('custom')
+    expect(result.current.phase).toBe('selecting-category')
+    expect(Object.keys(result.current.filteredCategories).sort()).toEqual(['dilemma', 'heat'])
+  })
+
+  it('ends the game once the custom pools are exhausted', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    act(() => {
+      result.current.startGame({
+        players: FOUR_PLAYERS,
+        mode: 'custom',
+        customCategories: ['dilemma'],
+      })
+    })
+
+    const poolSize = result.current.categoryQuestions.dilemma.length
+    for (let i = 0; i < poolSize; i++) {
+      expect(result.current.phase).toBe('selecting-category')
+      act(() => result.current.handleCategorySelect('dilemma'))
+      act(() => result.current.proceedToRating())
+      act(() => result.current.submitRating(1))
+    }
+
+    expect(result.current.categoryQuestions.dilemma).toHaveLength(0)
+    expect(result.current.phase).toBe('game-over')
+  })
+
+  it('resetGame clears the custom selection', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    act(() => {
+      result.current.startGame({
+        players: FOUR_PLAYERS,
+        mode: 'custom',
+        customCategories: ['spark'],
+      })
+    })
+    act(() => result.current.resetGame())
+    act(() => result.current.confirmModal.onConfirm())
+
+    expect(result.current.customCategories).toEqual([])
+    expect(localStorage.getItem('gameCustomCategories')).toBeNull()
+  })
+})

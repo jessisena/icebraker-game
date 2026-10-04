@@ -9,8 +9,6 @@
     "step1Helper": "Añade a todos los jugadores y configura sus datos",
     "nameLabel": "Tu nombre",
     "namePlaceholder": "Escribe un nombre…",
-    "avatarLabel": "Avatar",
-    "colorLabel": "Color",
     "back": "← Atrás",
     "next": "Siguiente →",
     "startButton": "¡Empezar!",
@@ -148,5 +146,9 @@
     "points_other": "{{count}} puntos",
     "tally": "{{good}} buenas, {{neutral}} regulares, {{bad}} malas"
   },
-  "identity": {}
+  "identity": {
+    "deckHeading": "{{name}}, elige tu carta",
+    "colorHeading": "Y un color",
+    "takenBy": "{{label}}, ya es de {{owner}}"
+  }
 }

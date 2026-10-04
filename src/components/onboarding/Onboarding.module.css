@@ -11,46 +11,6 @@
   overflow: hidden;
 }
 
-/* Ambient colour blooms in the background */
-.bloom {
-  position: fixed;
-  width: clamp(260px, 50vw, 440px);
-  height: clamp(260px, 50vw, 440px);
-  left: var(--bloom-x);
-  top: var(--bloom-y);
-  transform: translate(-50%, -50%);
-  border-radius: var(--radius-full);
-  background: radial-gradient(
-    ellipse,
-    color-mix(in srgb, var(--bloom-color) 22%, transparent) 0%,
-    transparent 68%
-  );
-  pointer-events: none;
-  transition: background var(--duration-slow) var(--ease-standard);
-  z-index: 0;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .bloom {
-    animation: bloomPulse 8s ease-in-out infinite alternate;
-  }
-
-  .bloom:last-of-type {
-    animation-delay: -4s;
-  }
-}
-
-@keyframes bloomPulse {
-  from {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.08);
-  }
-}
-
 /* ── Card ─────────────────────────────────────────────────────────────────── */
 
 .card {

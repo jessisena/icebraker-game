@@ -388,3 +388,90 @@ describe('Onboarding — custom mode', () => {
     expect(customCategories).toEqual([])
   })
 })
+
+describe('Onboarding — identity picker (cards and colours)', () => {
+  beforeEach(() => {
+    i18n.changeLanguage('en')
+  })
+
+  it("does not let a player pick another player's card", async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+
+    const takenCard = screen.getByRole('radio', { name: 'The Key, taken by Player 2' })
+    expect(takenCard).toHaveAttribute('aria-disabled', 'true')
+    await user.click(takenCard)
+
+    expect(takenCard).not.toBeChecked()
+    expect(screen.getByRole('radio', { name: 'The Eye' })).toBeChecked()
+  })
+
+  it("does not let a player pick another player's colour", async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+
+    const takenSwatch = screen.getByRole('radio', { name: 'Turquoise, taken by Player 2' })
+    expect(takenSwatch).toHaveAttribute('aria-disabled', 'true')
+    await user.click(takenSwatch)
+
+    expect(takenSwatch).not.toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Garnet' })).toBeChecked()
+  })
+
+  it('names the owner of a taken card once they have typed a name', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+    await expandRow(user, 2)
+    await fillExpandedName(user, '  Leo ')
+    await expandRow(user, 1)
+
+    expect(screen.getByRole('radio', { name: 'The Key, taken by Leo' })).toBeInTheDocument()
+  })
+
+  it('skips taken cards when moving with the arrow keys', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+
+    await user.click(screen.getByRole('radio', { name: 'The Eye' }))
+    await user.keyboard('{ArrowRight}')
+    const hand = screen.getByRole('radio', { name: 'The Hand' })
+    expect(hand).toBeChecked()
+    expect(hand).toHaveFocus()
+
+    await user.keyboard('{ArrowLeft}')
+    expect(screen.getByRole('radio', { name: 'The Eye' })).toBeChecked()
+
+    await user.keyboard('{ArrowLeft}')
+    expect(screen.getByRole('radio', { name: 'The Moon' })).toBeChecked()
+  })
+
+  it('skips taken colours when moving with the arrow keys', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+
+    await user.click(screen.getByRole('radio', { name: 'Jade' }))
+    await user.keyboard('{ArrowRight}')
+    expect(screen.getByRole('radio', { name: 'Amethyst' })).toBeChecked()
+  })
+
+  it('gives a newly added player the first free card and colour', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /friends/i)
+
+    await user.click(screen.getByRole('radio', { name: 'The Hand' }))
+    await user.click(screen.getByRole('radio', { name: 'Saffron' }))
+    await user.click(screen.getByRole('button', { name: /add player/i }))
+
+    expect(screen.getByRole('radio', { name: 'The Eye' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Garnet' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'The Hand, taken by Player 1' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Saffron, taken by Player 1' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'The Key, taken by Player 2' })).toBeInTheDocument()
+  })
+})

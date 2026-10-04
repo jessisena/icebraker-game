@@ -23,19 +23,19 @@
       "maxPlayers": "Maximum 6 players reached"
     },
     "avatars": {
-      "moon": "Moon",
-      "sun": "Sun",
-      "star": "Star",
-      "comet": "Comet",
-      "planet": "Planet",
-      "constellation": "Constellation"
+      "eye": "The Eye",
+      "key": "The Key",
+      "hand": "The Hand",
+      "wheel": "The Wheel",
+      "crown": "The Crown",
+      "moon": "The Moon"
     },
     "colors": {
-      "ember": "Ember",
-      "amber": "Amber",
-      "moss": "Moss",
-      "sky": "Sky",
-      "orchid": "Orchid",
+      "garnet": "Garnet",
+      "saffron": "Saffron",
+      "jade": "Jade",
+      "turquoise": "Turquoise",
+      "amethyst": "Amethyst",
       "rose": "Rose"
     }
   },
@@ -139,5 +139,8 @@
     "changePlayers": "Change players",
     "answers_one": "{{count}} answer",
     "answers_other": "{{count}} answers"
-  }
+  },
+  "customMode": {},
+  "vote": {},
+  "identity": {}
 }

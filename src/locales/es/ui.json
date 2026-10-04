@@ -23,19 +23,19 @@
       "maxPlayers": "Ya hay 6 jugadores"
     },
     "avatars": {
-      "moon": "Luna",
-      "sun": "Sol",
-      "star": "Estrella",
-      "comet": "Cometa",
-      "planet": "Planeta",
-      "constellation": "Constelación"
+      "eye": "El Ojo",
+      "key": "La Llave",
+      "hand": "La Mano",
+      "wheel": "La Rueda",
+      "crown": "La Corona",
+      "moon": "La Luna"
     },
     "colors": {
-      "ember": "Ember",
-      "amber": "Ámbar",
-      "moss": "Musgo",
-      "sky": "Cielo",
-      "orchid": "Orquídea",
+      "garnet": "Granate",
+      "saffron": "Azafrán",
+      "jade": "Jade",
+      "turquoise": "Turquesa",
+      "amethyst": "Amatista",
       "rose": "Rosa"
     }
   },
@@ -139,5 +139,8 @@
     "changePlayers": "Cambiar jugadores",
     "answers_one": "{{count}} respuesta",
     "answers_other": "{{count}} respuestas"
-  }
+  },
+  "customMode": {},
+  "vote": {},
+  "identity": {}
 }

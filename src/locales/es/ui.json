@@ -80,7 +80,8 @@
     "answered": "✓ Ya Respondí",
     "skip": "⏭ Saltar",
     "defaultInstruction": "{{name}}, responde la pregunta",
-    "musicInstruction": "{{name}}, tu oponente reproducirá la canción. ¿Puedes adivinar el artista y título?"
+    "musicInstruction": "{{name}}, tu oponente reproducirá la canción. ¿Puedes adivinar el artista y título?",
+    "timerLabel": "Segundos"
   },
   "decade": {
     "heading": "{{name}}, elige una década",

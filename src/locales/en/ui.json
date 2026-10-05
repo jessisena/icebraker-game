@@ -80,7 +80,8 @@
     "answered": "✓ I Answered",
     "skip": "⏭ Skip",
     "defaultInstruction": "{{name}}, answer the question",
-    "musicInstruction": "{{name}}, your opponent will play the song. Can you guess the artist and title?"
+    "musicInstruction": "{{name}}, your opponent will play the song. Can you guess the artist and title?",
+    "timerLabel": "Seconds"
   },
   "decade": {
     "heading": "{{name}}, choose a decade",

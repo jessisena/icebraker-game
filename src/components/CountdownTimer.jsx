@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 import styles from './CountdownTimer.module.css'
 
 const RING_RADIUS = 80
@@ -16,6 +17,7 @@ function formatTime(secs) {
 }
 
 export default function CountdownTimer({ seconds = 90, onComplete }) {
+  const { t } = useTranslation()
   const [timeRemaining, setTimeRemaining] = useState(seconds)
   const intervalRef = useRef(null)
 
@@ -67,7 +69,7 @@ export default function CountdownTimer({ seconds = 90, onComplete }) {
         <div className={styles.timeDisplay} style={{ color }}>
           {formatTime(timeRemaining)}
         </div>
-        <div className={styles.label}>Segundos</div>
+        <div className={styles.label}>{t('question.timerLabel')}</div>
       </div>
     </div>
   )

@@ -103,7 +103,6 @@
 /* Expanded body */
 .rowBody {
   padding: var(--space-4);
-  padding-top: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -121,8 +120,6 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
 }
 
 .input {
@@ -155,7 +152,7 @@
 
 .inputError:focus {
   border-color: var(--cat-heat);
-  box-shadow: 0 0 0 3px rgba(232, 97, 92, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cat-heat) 15%, transparent);
 }
 
 .error {
@@ -175,9 +172,33 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
   margin: 0;
+}
+
+.pickerHeading {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Collapsed rows show the chosen card in miniature */
+.miniCard {
+  flex-shrink: 0;
+  width: 28px;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.miniCard svg {
+  width: 80%;
+  height: auto;
 }
 
 /* Remove button */
@@ -196,7 +217,7 @@
 }
 
 .removeBtn:hover {
-  background-color: rgba(232, 97, 92, 0.1);
+  background-color: color-mix(in srgb, var(--cat-heat) 10%, transparent);
 }
 
 .removeBtn:focus-visible {

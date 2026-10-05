@@ -4,6 +4,29 @@ A running log of decisions and their rationale, newest-first.
 
 ---
 
+## 2026-10-04 — Custom mode, Good/Neutral/Bad votes, Lapis Night identity
+
+**Decision:**
+- Add a fourth mode, **Custom**, for 2–6 players. The group picks any subset of the 9 categories (at least 1), including `heat`. Choosing Custom from "Change mode" mid-game reopens the picker with the current selection ticked.
+- Replace 1–5 stars and the 0/1/2 point buttons with one vote everywhere: **Good = 2, Neutral = 1, Bad = 0**. The leaderboard ranks by total points, then fewer turns, and shows a 👍/😐/👎 tally.
+- Redesign player identity as a **card deck** of six **Arcana emblems** (eye, key, hand, wheel, crown, moon). Glyphs and colors are unique per player.
+- Re-theme the app from Velvet Hour to **Lapis Night** (ink-blue ground, bone text, brass accent). Player colors are stored as `var(--player-*)` tokens so the light theme can use darker shades that pass 4.5:1.
+- `STORAGE_VERSION` in `src/data/ratings.js` gates saved data. On a mismatch, ratings are cleared and saved avatars/colors are remapped by index; players and mode are kept.
+
+**Why:**
+- Custom mode lets groups play only the categories that suit them, without a fourth hard-coded `modes` list.
+- Three choices are quicker to agree on aloud than five stars. One scale for every category removes the special point UI. 2/1/0 matches the scale music trivia and Atlas already used.
+- Turns differ by at most one under round-robin, so ranking by total points is fair and easier to read than a 0–2 average.
+- Fixed hex player colors failed contrast on the light theme (saffron 1.69:1). Tokens let each theme supply a readable shade with no per-theme logic in components.
+
+**Alternatives rejected:**
+- +1/0/−1 net score: negative totals feel punishing in a party game.
+- Keep 0/1/2 point buttons for music and Atlas: two scoring systems for one leaderboard.
+- Adding `'custom'` to every category's `modes`: Custom is a per-game selection, not a property of a category.
+- Converting old 1–5 star ratings to the new scale: migration code for a game in progress isn't worth keeping around.
+
+---
+
 ## 2026-09-13 — 2–6 players for Friends & Team; Couples stays at 2
 
 **Decision:** Implement N-player support (2–6) for Friends and Team modes. Couples stays locked at exactly 2. Mode selection moves to the first onboarding step (before players are configured) so the mode can gate the roster size. Group consensus rating: all non-answering players agree on one score, entered with a single tap. Turn rotation is round-robin `(currentPlayer + 1) % players.length`.

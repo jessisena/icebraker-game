@@ -18,21 +18,16 @@ export default function Leaderboard({ players, onClose, onReset }) {
           <div key={player.name} className={styles.entry}>
             <div className={styles.playerInfo}>
               <AvatarGlyph name={player.avatar} color={player.color} size="md" />
-              <div>
-                <p className={styles.playerName} style={{ color: player.color }}>
-                  {MEDALS[index] ?? '🏅'} {player.name}
-                </p>
-                <p className={styles.totalRatings}>
-                  {t('leaderboard.ratings', { count: player.totalRatings })}
-                </p>
-              </div>
+              <p className={styles.playerName} style={{ color: player.color }}>
+                {MEDALS[index] ?? '🏅'} {player.name}
+              </p>
             </div>
 
             <div className={styles.scoreBlock}>
-              <div className={styles.stars}>
-                {'⭐'.repeat(Math.min(Math.round(Number(player.average)), 5))}
-              </div>
-              <p className={styles.score}>{player.average}</p>
+              <p className={styles.score}>{t('vote.points', { count: player.total })}</p>
+              <span className={styles.tally} role="img" aria-label={t('vote.tally', player.tally)}>
+                👍 {player.tally.good} · 😐 {player.tally.neutral} · 👎 {player.tally.bad}
+              </span>
             </div>
           </div>
         ))}
@@ -48,8 +43,20 @@ export default function Leaderboard({ players, onClose, onReset }) {
   )
 }
 
+const rankedPlayerShape = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  avatar: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+  total: PropTypes.number.isRequired,
+  tally: PropTypes.shape({
+    good: PropTypes.number.isRequired,
+    neutral: PropTypes.number.isRequired,
+    bad: PropTypes.number.isRequired,
+  }).isRequired,
+})
+
 Leaderboard.propTypes = {
-  players: PropTypes.array.isRequired,
+  players: PropTypes.arrayOf(rankedPlayerShape).isRequired,
   onClose: PropTypes.func.isRequired,
   onReset: PropTypes.func.isRequired,
 }

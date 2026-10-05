@@ -48,7 +48,7 @@ describe('Onboarding — step 1: mode selection', () => {
   it('shows the player count badge on each mode card', () => {
     renderOnboarding()
     expect(screen.getByText(/2 players/i)).toBeInTheDocument()
-    expect(screen.getAllByText(/2–6 players/i)).toHaveLength(2)
+    expect(screen.getAllByText(/2–6 players/i)).toHaveLength(3)
   })
 
   it('Next is disabled until a mode is selected', () => {
@@ -279,5 +279,199 @@ describe('Onboarding — happy path', () => {
     expect(mode).toBe('friends')
     expect(players).toHaveLength(4)
     expect(players.map((p) => p.name)).toEqual(names)
+  })
+})
+
+describe('Onboarding — custom mode', () => {
+  beforeEach(() => {
+    i18n.changeLanguage('en')
+  })
+
+  async function pickCustom(user) {
+    await user.click(screen.getByRole('button', { name: /custom/i }))
+    await user.click(screen.getByRole('button', { name: /next/i }))
+    await screen.findByText(/step 2 of 3/i)
+  }
+
+  async function fillTwoPlayers(user) {
+    await fillExpandedName(user, 'Alice')
+    await expandRow(user, 2)
+    await fillExpandedName(user, 'Bob')
+  }
+
+  it('skips the category step for non-custom modes', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /team/i)
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    expect(screen.getByLabelText(/your name/i)).toBeInTheDocument()
+  })
+
+  it('shows all 9 categories as checkboxes after picking Custom', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickCustom(user)
+    expect(screen.getAllByRole('checkbox')).toHaveLength(9)
+    expect(screen.getByRole('checkbox', { name: /the heat/i })).not.toBeChecked()
+  })
+
+  it('disables Next with no categories ticked and explains why', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickCustom(user)
+    expect(screen.getByRole('button', { name: /next/i })).toBeDisabled()
+    expect(screen.getByText(/pick at least one category/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('checkbox', { name: /the heat/i }))
+    expect(screen.getByRole('button', { name: /next/i })).not.toBeDisabled()
+
+    await user.click(screen.getByRole('checkbox', { name: /the heat/i }))
+    expect(screen.getByRole('button', { name: /next/i })).toBeDisabled()
+  })
+
+  it('toggles a category with the keyboard', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickCustom(user)
+    const spark = screen.getByRole('checkbox', { name: /the spark/i })
+    spark.focus()
+    await user.keyboard(' ')
+    expect(spark).toBeChecked()
+  })
+
+  it('back from roster returns to categories with the selection kept', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickCustom(user)
+    await user.click(screen.getByRole('checkbox', { name: /the mirror/i }))
+    await user.click(screen.getByRole('button', { name: /next/i }))
+    await screen.findByText(/step 3 of 3/i)
+
+    await user.click(screen.getByRole('button', { name: /back/i }))
+    expect(await screen.findByText(/step 2 of 3/i)).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /the mirror/i })).toBeChecked()
+  })
+
+  it('calls onComplete with the custom categories', async () => {
+    const onComplete = vi.fn()
+    const user = userEvent.setup()
+    renderOnboarding(onComplete)
+    await pickCustom(user)
+    await user.click(screen.getByRole('checkbox', { name: /the heat/i }))
+    await user.click(screen.getByRole('checkbox', { name: /the dilemma/i }))
+    await user.click(screen.getByRole('button', { name: /next/i }))
+    await screen.findByText(/step 3 of 3/i)
+
+    await fillTwoPlayers(user)
+    await user.click(screen.getByRole('button', { name: /let's play/i }))
+
+    expect(onComplete).toHaveBeenCalledOnce()
+    const { mode, customCategories } = onComplete.mock.calls[0][0]
+    expect(mode).toBe('custom')
+    expect(customCategories).toEqual(['heat', 'dilemma'])
+  })
+
+  it('sends an empty selection when switching away from Custom', async () => {
+    const onComplete = vi.fn()
+    const user = userEvent.setup()
+    renderOnboarding(onComplete)
+    await pickCustom(user)
+    await user.click(screen.getByRole('checkbox', { name: /the heat/i }))
+    await user.click(screen.getByRole('button', { name: /back/i }))
+    await pickMode(user, /friends/i)
+
+    await fillTwoPlayers(user)
+    await user.click(screen.getByRole('button', { name: /let's play/i }))
+
+    const { mode, customCategories } = onComplete.mock.calls[0][0]
+    expect(mode).toBe('friends')
+    expect(customCategories).toEqual([])
+  })
+})
+
+describe('Onboarding — identity picker (cards and colors)', () => {
+  beforeEach(() => {
+    i18n.changeLanguage('en')
+  })
+
+  it("does not let a player pick another player's card", async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+
+    const takenCard = screen.getByRole('radio', { name: 'The Key, taken by Player 2' })
+    expect(takenCard).toHaveAttribute('aria-disabled', 'true')
+    await user.click(takenCard)
+
+    expect(takenCard).not.toBeChecked()
+    expect(screen.getByRole('radio', { name: 'The Eye' })).toBeChecked()
+  })
+
+  it("does not let a player pick another player's color", async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+
+    const takenSwatch = screen.getByRole('radio', { name: 'Turquoise, taken by Player 2' })
+    expect(takenSwatch).toHaveAttribute('aria-disabled', 'true')
+    await user.click(takenSwatch)
+
+    expect(takenSwatch).not.toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Garnet' })).toBeChecked()
+  })
+
+  it('names the owner of a taken card once they have typed a name', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+    await expandRow(user, 2)
+    await fillExpandedName(user, '  Leo ')
+    await expandRow(user, 1)
+
+    expect(screen.getByRole('radio', { name: 'The Key, taken by Leo' })).toBeInTheDocument()
+  })
+
+  it('skips taken cards when moving with the arrow keys', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+
+    await user.click(screen.getByRole('radio', { name: 'The Eye' }))
+    await user.keyboard('{ArrowRight}')
+    const hand = screen.getByRole('radio', { name: 'The Hand' })
+    expect(hand).toBeChecked()
+    expect(hand).toHaveFocus()
+
+    await user.keyboard('{ArrowLeft}')
+    expect(screen.getByRole('radio', { name: 'The Eye' })).toBeChecked()
+
+    await user.keyboard('{ArrowLeft}')
+    expect(screen.getByRole('radio', { name: 'The Moon' })).toBeChecked()
+  })
+
+  it('skips taken colors when moving with the arrow keys', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /couple/i)
+
+    await user.click(screen.getByRole('radio', { name: 'Jade' }))
+    await user.keyboard('{ArrowRight}')
+    expect(screen.getByRole('radio', { name: 'Amethyst' })).toBeChecked()
+  })
+
+  it('gives a newly added player the first free card and color', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /friends/i)
+
+    await user.click(screen.getByRole('radio', { name: 'The Hand' }))
+    await user.click(screen.getByRole('radio', { name: 'Saffron' }))
+    await user.click(screen.getByRole('button', { name: /add player/i }))
+
+    expect(screen.getByRole('radio', { name: 'The Eye' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Garnet' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'The Hand, taken by Player 1' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Saffron, taken by Player 1' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'The Key, taken by Player 2' })).toBeInTheDocument()
   })
 })

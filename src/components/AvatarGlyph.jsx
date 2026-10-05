@@ -1,205 +1,81 @@
 import PropTypes from 'prop-types'
 import styles from './AvatarGlyph.module.css'
 
-/* Inline SVG glyphs — all elements use currentColor so the parent's
-   `color` style tints the entire glyph. viewBox 0 0 100 100.
-   Design rules: min stroke-width 4, no fillOpacity below 0.25,
-   2-4 shapes per glyph, distinct silhouette at 36px. */
+/* Arcana emblems drawn in an engraved line style. viewBox 0 0 100 100.
+   Design rules: primary shapes are strokes in currentColor (the player's
+   color) at one weight — 5 units, round caps and joins — set once on the
+   wrapping <g>. Brass details use the .detail (3-unit line) and .jewel
+   (fill) classes, which read var(--accent). Keep details sparse and keep
+   every stroke inside a 6-unit margin so each silhouette stays legible
+   and distinct at 36px. */
 const GLYPHS = {
+  eye: (
+    <>
+      <path d="M 8 58 Q 50 20 92 58 Q 50 96 8 58 Z" />
+      <circle cx="50" cy="58" r="12" />
+      <circle cx="50" cy="58" r="5" fill="currentColor" stroke="none" />
+      <path className={styles.detail} d="M 50 32 V 20 M 27 37 L 22 28 M 73 37 L 78 28" />
+    </>
+  ),
+  key: (
+    <g transform="rotate(-45 50 50)">
+      <circle cx="50" cy="22" r="13" />
+      <path d="M 50 35 V 88 H 64 V 78 M 50 74 H 60 M 43 42 H 57" />
+      <circle className={styles.jewel} cx="50" cy="22" r="4" />
+    </g>
+  ),
+  hand: (
+    <>
+      <path
+        d="M 40 88 L 35 66 L 20 52 A 5.5 5.5 0 0 1 28 45 L 35 52 V 26 A 6 6 0 0 1 47 26
+           V 44 V 18 A 6 6 0 0 1 59 18 V 44 V 22 A 6 6 0 0 1 71 22
+           V 46 V 33 A 5.5 5.5 0 0 1 82 33 V 62 L 77 88"
+      />
+      <path className={styles.detail} d="M 49 66 Q 58 59 67 66 Q 58 73 49 66 Z" />
+      <circle className={styles.jewel} cx="58" cy="66" r="2.5" />
+    </>
+  ),
+  wheel: (
+    <>
+      <circle cx="50" cy="50" r="34" />
+      <circle cx="50" cy="50" r="8" />
+      <path
+        d="M 50 42 V 16 M 50 58 V 84 M 42 50 H 16 M 58 50 H 84
+           M 55.66 44.34 L 74.04 25.96 M 44.34 55.66 L 25.96 74.04
+           M 55.66 55.66 L 74.04 74.04 M 44.34 44.34 L 25.96 25.96"
+      />
+      <path
+        className={styles.detail}
+        d="M 64.93 13.97 L 66.84 9.35 M 86.03 35.07 L 90.65 33.16
+           M 86.03 64.93 L 90.65 66.84 M 64.93 86.03 L 66.84 90.65
+           M 35.07 86.03 L 33.16 90.65 M 13.97 64.93 L 9.35 66.84
+           M 13.97 35.07 L 9.35 33.16 M 35.07 13.97 L 33.16 9.35"
+      />
+      <circle className={styles.jewel} cx="50" cy="50" r="3" />
+    </>
+  ),
+  crown: (
+    <>
+      <path d="M 20 78 L 14 34 L 34 54 L 50 24 L 66 54 L 86 34 L 80 78 Z M 18.4 66 H 81.6" />
+      <circle className={styles.jewel} cx="14" cy="27" r="4" />
+      <circle className={styles.jewel} cx="50" cy="17" r="4" />
+      <circle className={styles.jewel} cx="86" cy="27" r="4" />
+      <circle className={styles.jewel} cx="35" cy="72" r="3" />
+      <circle className={styles.jewel} cx="50" cy="72" r="3" />
+      <circle className={styles.jewel} cx="65" cy="72" r="3" />
+    </>
+  ),
   moon: (
     <>
-      {/*
-        Crescent: outer circle center(50,50) r=38 minus inner circle center(36,50) r=34.
-        Intersection points ≈ (32.7, 16.2) and (32.7, 83.8).
-        First arc: CW large-arc sweeps the right half of the outer circle.
-        Second arc: CCW short arc traces the concave inner edge.
-      */}
-      <path d="M 32.7 16.2 A 38 38 0 1 1 32.7 83.8 A 34 34 0 0 0 32.7 16.2 Z" fill="currentColor" />
-    </>
-  ),
-  sun: (
-    <>
-      {/* Disc */}
-      <circle cx="50" cy="50" r="21" fill="currentColor" />
-      {/* 8 rays from r=27 to r=38, starting at 12 o'clock */}
-      <line
-        x1="50.0"
-        y1="23.0"
-        x2="50.0"
-        y2="12.0"
-        stroke="currentColor"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="69.1"
-        y1="30.9"
-        x2="76.9"
-        y2="23.1"
-        stroke="currentColor"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="77.0"
-        y1="50.0"
-        x2="88.0"
-        y2="50.0"
-        stroke="currentColor"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="69.1"
-        y1="69.1"
-        x2="76.9"
-        y2="76.9"
-        stroke="currentColor"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="50.0"
-        y1="77.0"
-        x2="50.0"
-        y2="88.0"
-        stroke="currentColor"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="30.9"
-        y1="69.1"
-        x2="23.1"
-        y2="76.9"
-        stroke="currentColor"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="23.0"
-        y1="50.0"
-        x2="12.0"
-        y2="50.0"
-        stroke="currentColor"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="30.9"
-        y1="30.9"
-        x2="23.1"
-        y2="23.1"
-        stroke="currentColor"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-    </>
-  ),
-  star: (
-    <>
-      {/*
-        5-point star: outer r=40, inner r=16, first point at 12 o'clock.
-        Points alternate outer/inner at 36° increments starting at -90°.
-      */}
-      <polygon
-        points="50.0,10.0 59.4,37.1 88.0,37.6 65.2,54.9 73.5,82.4 50.0,66.0 26.5,82.4 34.8,54.9 12.0,37.6 40.6,37.1"
-        fill="currentColor"
-        strokeLinejoin="round"
-      />
-    </>
-  ),
-  comet: (
-    <>
-      {/* Tapering trail sweeping toward lower-left */}
-      <path d="M 54 50 Q 30 63 11 83 Q 20 72 45 54 Z" fill="currentColor" fillOpacity="0.38" />
-      {/* Head */}
-      <circle cx="66" cy="34" r="15" fill="currentColor" />
-    </>
-  ),
-  planet: (
-    <>
-      {/*
-        Ring back half (dim) + disc + ring front half (full).
-        Ellipse cx=50 cy=50 rx=43 ry=13 rotated -22°.
-        Major axis endpoints after rotation: (89.9, 33.9) and (10.1, 66.1).
-        sweep=0 → through top of ellipse (back); sweep=1 → through bottom (front).
-      */}
+      {/* Outer circle c(50,50) r36 minus inner circle c(66,50) r30;
+          they intersect at (70.38, 20.32) and (70.38, 79.68). */}
+      <path d="M 70.38 20.32 A 36 36 0 1 0 70.38 79.68 A 30 30 0 1 1 70.38 20.32 Z" />
       <path
-        d="M 89.9 33.9 A 43 13 -22 0 0 10.1 66.1"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="5"
-        strokeOpacity="0.25"
+        className={styles.jewel}
+        d="M 68 40 L 71 47 L 78 50 L 71 53 L 68 60 L 65 53 L 58 50 L 65 47 Z"
       />
-      <circle cx="50" cy="50" r="25" fill="currentColor" />
-      <path
-        d="M 89.9 33.9 A 43 13 -22 0 1 10.1 66.1"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="5"
-      />
-    </>
-  ),
-  constellation: (
-    <>
-      {/* Connector lines drawn first (behind dots) */}
-      <line
-        x1="50"
-        y1="16"
-        x2="20"
-        y2="50"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeOpacity="0.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="50"
-        y1="16"
-        x2="80"
-        y2="50"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeOpacity="0.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="20"
-        y1="50"
-        x2="32"
-        y2="80"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeOpacity="0.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="80"
-        y1="50"
-        x2="68"
-        y2="80"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeOpacity="0.5"
-        strokeLinecap="round"
-      />
-      <line
-        x1="32"
-        y1="80"
-        x2="68"
-        y2="80"
-        stroke="currentColor"
-        strokeWidth="3.5"
-        strokeOpacity="0.5"
-        strokeLinecap="round"
-      />
-      {/* Stars — anchor at top is larger */}
-      <circle cx="50" cy="16" r="7" fill="currentColor" />
-      <circle cx="20" cy="50" r="5" fill="currentColor" />
-      <circle cx="80" cy="50" r="5" fill="currentColor" />
-      <circle cx="32" cy="80" r="5" fill="currentColor" />
-      <circle cx="68" cy="80" r="5" fill="currentColor" />
+      <circle className={styles.jewel} cx="84" cy="36" r="2.5" />
+      <circle className={styles.jewel} cx="82" cy="66" r="2" />
     </>
   ),
 }
@@ -222,13 +98,21 @@ export default function AvatarGlyph({ name, color, size = 'lg', className }) {
       aria-hidden="true"
       focusable="false"
     >
-      {glyph}
+      <g
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {glyph}
+      </g>
     </svg>
   )
 }
 
 AvatarGlyph.propTypes = {
-  name: PropTypes.oneOf(['moon', 'sun', 'star', 'comet', 'planet', 'constellation']).isRequired,
+  name: PropTypes.oneOf(['eye', 'key', 'hand', 'wheel', 'crown', 'moon']).isRequired,
   color: PropTypes.string.isRequired,
   size: PropTypes.oneOf(['sm', 'md', 'lg']),
   className: PropTypes.string,

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import { avatars, colors } from '../../data/options'
 import AvatarGlyph from '../AvatarGlyph'
-import AvatarPicker from '../pickers/AvatarPicker'
+import CardDeck from '../pickers/CardDeck'
 import ColorPicker from '../pickers/ColorPicker'
 import Button from '../primitives/Button'
 import styles from './RosterStep.module.css'
@@ -56,6 +56,11 @@ export default function RosterStep({ mode, players, onPlayersChange, onBack, onS
     })
   }
 
+  const labelFor = (player, index) => player.name.trim() || t('setup.playerN', { n: index + 1 })
+
+  const takenByOthers = (index, key) =>
+    Object.fromEntries(players.flatMap((p, i) => (i === index ? [] : [[p[key], labelFor(p, i)]])))
+
   const validate = () => {
     const errs = {}
     players.forEach((p, i) => {
@@ -98,7 +103,9 @@ export default function RosterStep({ mode, players, onPlayersChange, onBack, onS
             key={index}
             index={index}
             player={player}
-            playerNumber={index + 1}
+            label={labelFor(player, index)}
+            avatarTakenBy={takenByOthers(index, 'avatar')}
+            colorTakenBy={takenByOthers(index, 'color')}
             isExpanded={expandedIndex === index}
             error={errors[index]}
             showRemove={!isCouples && index >= MIN_PLAYERS}
@@ -141,9 +148,71 @@ RosterStep.propTypes = {
   onStart: PropTypes.func.isRequired,
 }
 
+const playerShape = PropTypes.shape({
+  name: PropTypes.string.isRequired,
+  avatar: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+})
+
+function MiniCard({ avatar, color }) {
+  return (
+    <span className={styles.miniCard} style={{ backgroundColor: color }} aria-hidden="true">
+      <AvatarGlyph name={avatar} color="var(--bg)" size="sm" />
+    </span>
+  )
+}
+
+MiniCard.propTypes = {
+  avatar: PropTypes.string.isRequired,
+  color: PropTypes.string.isRequired,
+}
+
+function IdentityPickers({ player, label, avatarTakenBy, colorTakenBy, onChange }) {
+  const { t } = useTranslation()
+  const deckHeading = t('identity.deckHeading', { name: label })
+  const colorHeading = t('identity.colorHeading')
+
+  return (
+    <>
+      <div className={styles.pickerSection}>
+        <p className={styles.pickerHeading}>{deckHeading}</p>
+        <CardDeck
+          avatars={avatars}
+          selected={player.avatar}
+          takenBy={avatarTakenBy}
+          onChange={(avatar) => onChange({ avatar })}
+          accentColor={player.color}
+          label={deckHeading}
+        />
+      </div>
+
+      <div className={styles.pickerSection}>
+        <p className={styles.pickerLabel}>{colorHeading}</p>
+        <ColorPicker
+          colors={colors}
+          selected={player.color}
+          takenBy={colorTakenBy}
+          onChange={(color) => onChange({ color })}
+          label={colorHeading}
+        />
+      </div>
+    </>
+  )
+}
+
+IdentityPickers.propTypes = {
+  player: playerShape.isRequired,
+  label: PropTypes.string.isRequired,
+  avatarTakenBy: PropTypes.objectOf(PropTypes.string).isRequired,
+  colorTakenBy: PropTypes.objectOf(PropTypes.string).isRequired,
+  onChange: PropTypes.func.isRequired,
+}
+
 function PlayerRow({
   player,
-  playerNumber,
+  label,
+  avatarTakenBy,
+  colorTakenBy,
   isExpanded,
   error,
   showRemove,
@@ -154,6 +223,7 @@ function PlayerRow({
   const { t } = useTranslation()
   const nameId = useId()
   const errorId = useId()
+  const hasName = Boolean(player.name.trim())
 
   return (
     <div className={[styles.row, isExpanded ? styles.rowExpanded : ''].join(' ')}>
@@ -162,16 +232,14 @@ function PlayerRow({
         className={styles.rowHeader}
         onClick={onToggle}
         aria-expanded={isExpanded}
-        aria-label={player.name.trim() || t('setup.playerN', { n: playerNumber })}
+        aria-label={label}
       >
-        <AvatarGlyph name={player.avatar} color={player.color} size="sm" />
+        <MiniCard avatar={player.avatar} color={player.color} />
         <span
-          className={[styles.rowName, !player.name.trim() ? styles.rowNamePlaceholder : ''].join(
-            ' '
-          )}
-          style={player.name.trim() ? { color: player.color } : undefined}
+          className={[styles.rowName, hasName ? '' : styles.rowNamePlaceholder].join(' ')}
+          style={hasName ? { color: player.color } : undefined}
         >
-          {player.name.trim() || t('setup.playerN', { n: playerNumber })}
+          {label}
         </span>
         {error && !isExpanded && (
           <span className={styles.rowErrorBadge} aria-hidden="true">
@@ -208,24 +276,13 @@ function PlayerRow({
             )}
           </div>
 
-          <div className={styles.pickerSection}>
-            <p className={styles.pickerLabel}>{t('setup.avatarLabel')}</p>
-            <AvatarPicker
-              avatars={avatars}
-              selected={player.avatar}
-              onChange={(avatar) => onChange({ avatar })}
-              accentColor={player.color}
-            />
-          </div>
-
-          <div className={styles.pickerSection}>
-            <p className={styles.pickerLabel}>{t('setup.colorLabel')}</p>
-            <ColorPicker
-              colors={colors}
-              selected={player.color}
-              onChange={(color) => onChange({ color })}
-            />
-          </div>
+          <IdentityPickers
+            player={player}
+            label={label}
+            avatarTakenBy={avatarTakenBy}
+            colorTakenBy={colorTakenBy}
+            onChange={onChange}
+          />
 
           {showRemove && (
             <button type="button" className={styles.removeBtn} onClick={onRemove}>
@@ -239,12 +296,10 @@ function PlayerRow({
 }
 
 PlayerRow.propTypes = {
-  player: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    avatar: PropTypes.string.isRequired,
-    color: PropTypes.string.isRequired,
-  }).isRequired,
-  playerNumber: PropTypes.number.isRequired,
+  player: playerShape.isRequired,
+  label: PropTypes.string.isRequired,
+  avatarTakenBy: PropTypes.objectOf(PropTypes.string).isRequired,
+  colorTakenBy: PropTypes.objectOf(PropTypes.string).isRequired,
   isExpanded: PropTypes.bool.isRequired,
   error: PropTypes.string,
   showRemove: PropTypes.bool.isRequired,

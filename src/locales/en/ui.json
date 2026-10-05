@@ -9,8 +9,6 @@
     "step1Helper": "Add all players and set up their details",
     "nameLabel": "Your name",
     "namePlaceholder": "Type a name…",
-    "avatarLabel": "Avatar",
-    "colorLabel": "Colour",
     "back": "← Back",
     "next": "Next →",
     "startButton": "Let's play!",
@@ -23,19 +21,19 @@
       "maxPlayers": "Maximum 6 players reached"
     },
     "avatars": {
-      "moon": "Moon",
-      "sun": "Sun",
-      "star": "Star",
-      "comet": "Comet",
-      "planet": "Planet",
-      "constellation": "Constellation"
+      "eye": "The Eye",
+      "key": "The Key",
+      "hand": "The Hand",
+      "wheel": "The Wheel",
+      "crown": "The Crown",
+      "moon": "The Moon"
     },
     "colors": {
-      "ember": "Ember",
-      "amber": "Amber",
-      "moss": "Moss",
-      "sky": "Sky",
-      "orchid": "Orchid",
+      "garnet": "Garnet",
+      "saffron": "Saffron",
+      "jade": "Jade",
+      "turquoise": "Turquoise",
+      "amethyst": "Amethyst",
       "rose": "Rose"
     }
   },
@@ -62,7 +60,10 @@
     "friends_players": "2–6 players",
     "team_players": "2–6 players",
     "current": "Current mode: {{mode}}",
-    "couplesDisabled": "Couples mode is for 2 players — reduce the group first"
+    "couplesDisabled": "Couples mode is for 2 players — reduce the group first",
+    "custom": "🧩 Custom",
+    "custom_desc": "Pick your own mix from every category",
+    "custom_players": "2–6 players"
   },
   "toast": {
     "categoryExhausted": "You've answered all questions in this category. Choose another.",
@@ -79,37 +80,8 @@
     "answered": "✓ I Answered",
     "skip": "⏭ Skip",
     "defaultInstruction": "{{name}}, answer the question",
-    "musicInstruction": "{{name}}, your opponent will play the song. Can you guess the artist and title?"
-  },
-  "rating": {
-    "justAnswered": "{{name}} just answered",
-    "ratePrompt": "{{rater}}, {{criteria}}",
-    "criteria": {
-      "default": "How would you rate this answer?",
-      "music": "Rate your opponent's answer",
-      "absurdista": "Rate the TED Talk's creativity and how well they incorporated a trait about you",
-      "atlasOfMe": "Rate how strong the connection to the place is",
-      "dilemma": "Rate the depth of the moral reasoning and the justification for their choice"
-    },
-    "atlas": {
-      "none": "No Connection",
-      "light": "Light Connection",
-      "strong": "Strong Connection"
-    },
-    "music": {
-      "none": "None",
-      "partial": "Partial",
-      "perfect": "Perfect"
-    },
-    "points": {
-      "zero": "0 points",
-      "one": "1 point",
-      "two": "2 points"
-    },
-    "legend": {
-      "atlas": "2 pts = Strong, specific connection · 1 pt = Light connection · 0 pts = No connection",
-      "music": "2 pts = Artist + Title correct · 1 pt = Only one · 0 pts = No match"
-    }
+    "musicInstruction": "{{name}}, your opponent will play the song. Can you guess the artist and title?",
+    "timerLabel": "Seconds"
   },
   "decade": {
     "heading": "{{name}}, choose a decade",
@@ -127,17 +99,58 @@
   },
   "leaderboard": {
     "title": "Leaderboard",
-    "ratings_one": "{{count}} rating",
-    "ratings_other": "{{count}} ratings",
-    "backToGame": "Back to Game",
-    "changePlayers": "Change Players"
+    "backToGame": "Back to game",
+    "changePlayers": "Change players"
   },
   "gameOver": {
     "title": "Game over!",
     "subtitle": "All questions answered",
     "replay": "Play again",
-    "changePlayers": "Change players",
-    "answers_one": "{{count}} answer",
-    "answers_other": "{{count}} answers"
+    "changePlayers": "Change players"
+  },
+  "customMode": {
+    "heading": "Choose your categories",
+    "helper": "Tick the ones you want to play. You can change them during the game.",
+    "minHelper": "Pick at least one category to continue",
+    "noQuestionsHelper": "These categories have no questions left. Pick another one to continue",
+    "selected_one": "{{count}} category selected",
+    "selected_other": "{{count}} categories selected",
+    "musicHint": "Guess songs by decade",
+    "timer": "⏱ {{seconds}} s",
+    "save": "Save categories"
+  },
+  "vote": {
+    "justAnswered": "{{name}} just answered",
+    "ratePrompt": "{{rater}}, {{criteria}}",
+    "criteria": {
+      "default": "how would you rate this answer?",
+      "music": "rate the answer",
+      "absurdista": "rate the TED Talk's creativity and how well they incorporated a trait about you",
+      "atlasOfMe": "rate how strong the connection to the place is",
+      "dilemma": "rate the depth of the moral reasoning and the justification for their choice"
+    },
+    "good": "Good",
+    "neutral": "Neutral",
+    "bad": "Bad",
+    "hint": {
+      "music": {
+        "good": "Artist and title",
+        "neutral": "Only one of them",
+        "bad": "Neither"
+      },
+      "atlas": {
+        "good": "Strong connection",
+        "neutral": "Light connection",
+        "bad": "No connection"
+      }
+    },
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
+    "tally": "{{good}} good, {{neutral}} neutral, {{bad}} bad"
+  },
+  "identity": {
+    "deckHeading": "{{name}}, pick your card",
+    "colorHeading": "And a color",
+    "takenBy": "{{label}}, taken by {{owner}}"
   }
 }

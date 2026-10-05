@@ -49,7 +49,9 @@ export default function DecadeSelector({ opponentData, onDecadeSelect, available
               <div
                 className={styles.countBadge}
                 style={{
-                  backgroundColor: isEmpty ? 'var(--surface-raised)' : `${decade.color}22`,
+                  backgroundColor: isEmpty
+                    ? 'var(--surface-raised)'
+                    : `color-mix(in srgb, ${decade.color} 13%, transparent)`,
                   color: isEmpty ? 'var(--text-muted)' : decade.color,
                 }}
               >

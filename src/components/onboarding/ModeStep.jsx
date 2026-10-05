@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import Button from '../primitives/Button'
 import styles from './ModeStep.module.css'
 
-const MODES = [{ key: 'couples' }, { key: 'friends' }, { key: 'team' }]
+const MODES = [{ key: 'couples' }, { key: 'friends' }, { key: 'team' }, { key: 'custom' }]
 
 export default function ModeStep({ selectedMode, onModeSelect, onNext }) {
   const { t } = useTranslation()

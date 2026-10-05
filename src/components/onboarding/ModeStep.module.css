@@ -86,7 +86,7 @@
 .modeCard.active {
   border-color: var(--accent);
   background-color: var(--accent-soft);
-  box-shadow: 0 4px 16px rgba(224, 164, 88, 0.2);
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 .modeLabel {

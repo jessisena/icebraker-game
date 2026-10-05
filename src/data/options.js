@@ -1,19 +1,19 @@
 /* Avatar definitions — labelKey maps to setup.avatars.{name} in both locale files */
 export const avatars = [
+  { name: 'eye', labelKey: 'setup.avatars.eye' },
+  { name: 'key', labelKey: 'setup.avatars.key' },
+  { name: 'hand', labelKey: 'setup.avatars.hand' },
+  { name: 'wheel', labelKey: 'setup.avatars.wheel' },
+  { name: 'crown', labelKey: 'setup.avatars.crown' },
   { name: 'moon', labelKey: 'setup.avatars.moon' },
-  { name: 'sun', labelKey: 'setup.avatars.sun' },
-  { name: 'star', labelKey: 'setup.avatars.star' },
-  { name: 'comet', labelKey: 'setup.avatars.comet' },
-  { name: 'planet', labelKey: 'setup.avatars.planet' },
-  { name: 'constellation', labelKey: 'setup.avatars.constellation' },
 ]
 
-/* Six jewel tones that harmonise with the Velvet Hour dark palette */
+/* Six jewel tones; values are tokens so each theme can supply a readable shade */
 export const colors = [
-  { name: 'ember', value: '#e8615c', labelKey: 'setup.colors.ember' },
-  { name: 'amber', value: '#e89a3c', labelKey: 'setup.colors.amber' },
-  { name: 'moss', value: '#5fb37a', labelKey: 'setup.colors.moss' },
-  { name: 'sky', value: '#4fa8e8', labelKey: 'setup.colors.sky' },
-  { name: 'orchid', value: '#b15fd0', labelKey: 'setup.colors.orchid' },
-  { name: 'rose', value: '#d96ba0', labelKey: 'setup.colors.rose' },
+  { name: 'garnet', value: 'var(--player-garnet)', labelKey: 'setup.colors.garnet' },
+  { name: 'saffron', value: 'var(--player-saffron)', labelKey: 'setup.colors.saffron' },
+  { name: 'jade', value: 'var(--player-jade)', labelKey: 'setup.colors.jade' },
+  { name: 'turquoise', value: 'var(--player-turquoise)', labelKey: 'setup.colors.turquoise' },
+  { name: 'amethyst', value: 'var(--player-amethyst)', labelKey: 'setup.colors.amethyst' },
+  { name: 'rose', value: 'var(--player-rose)', labelKey: 'setup.colors.rose' },
 ]

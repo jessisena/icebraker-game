@@ -5,8 +5,8 @@ export const categories = {
   spark: { key: 'spark', icon: '✨', color: '#4fa8e8', modes: ['couples', 'friends', 'team'] },
   roots: { key: 'roots', icon: '🌱', color: '#5fb37a', modes: ['couples', 'friends', 'team'] },
   mirror: { key: 'mirror', icon: '🪞', color: '#b15fd0', modes: ['couples', 'friends'] },
-  heat: { key: 'heat', icon: '🔥', color: '#e8615c', modes: ['couples'] },
-  shadow: { key: 'shadow', icon: '🌑', color: '#7c8ba3', modes: ['couples', 'friends'] },
+  heat: { key: 'heat', icon: '🔥', color: '#ee6a45', modes: ['couples'] },
+  shadow: { key: 'shadow', icon: '🌑', color: '#8c86b8', modes: ['couples', 'friends'] },
   absurdista: {
     key: 'absurdista',
     icon: '🎭',
@@ -19,7 +19,6 @@ export const categories = {
     icon: '🎵',
     color: '#d96ba0',
     specialBehavior: 'music-trivia',
-    scoringType: 'points',
     modes: ['couples', 'friends', 'team'],
   },
   atlasOfMe: {
@@ -27,7 +26,6 @@ export const categories = {
     icon: '🗺️',
     color: '#3fa9a0',
     timerSeconds: 30,
-    scoringType: 'points',
     modes: ['couples', 'friends', 'team'],
   },
   dilemma: { key: 'dilemma', icon: '⚖️', color: '#a17f72', modes: ['couples', 'friends', 'team'] },

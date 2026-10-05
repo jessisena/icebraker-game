@@ -79,3 +79,8 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+.tally {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}

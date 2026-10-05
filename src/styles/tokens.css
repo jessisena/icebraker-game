@@ -1,4 +1,7 @@
-/* ── Velvet Hour — Design Tokens ─────────────────────────────────────────── */
+/* ── Lapis Night — Design Tokens ─────────────────────────────────────────── */
+/* An old star atlas: ink-blue ground, bone text, brass foil, jewel-tone players.
+   Dark is primary; "Lapis Day" is the light alternate. Contrast ratios live in
+   docs/design-system.md — keep both files in sync. */
 
 /* ── Fonts ──────────────────────────────────────────────────────────────── */
 
@@ -22,39 +25,41 @@
 
 :root {
   /* Neutrals */
-  --bg: #191320;
-  --surface: #241c2e;
-  --surface-raised: #2f2539;
-  --border: #3d3049;
-  --text: #f4ede4;
-  --text-muted: #a99bb4;
+  --bg: #121a2e;
+  --surface: #1c2640;
+  --surface-raised: #26314f;
+  --border: #34406a;
+  --text: #eee6d6;
+  --text-muted: #9aa3bd;
+  --ink: #0a0f1c;
 
   /* Brand */
-  --brand: #8b5cf6;
-  --brand-hover: #a78bfa;
-  --brand-soft: rgba(139, 92, 246, 0.12);
-  --accent: #e0a458;
-  --accent-soft: rgba(224, 164, 88, 0.12);
+  --brand: #6e8bf5;
+  --brand-hover: #8fa6f8;
+  --brand-soft: rgba(110, 139, 245, 0.12);
+  --on-brand: #121a2e;
+  --accent: #c9a45c;
+  --accent-soft: rgba(201, 164, 92, 0.12);
 
   /* Category accents */
   --cat-spark: #4fa8e8;
   --cat-roots: #5fb37a;
   --cat-mirror: #b15fd0;
-  --cat-heat: #e8615c;
-  --cat-shadow: #7c8ba3;
+  --cat-heat: #ee6a45;
+  --cat-shadow: #8c86b8;
   --cat-absurdista: #e89a3c;
   --cat-decadesTape: #d96ba0;
   --cat-atlasOfMe: #3fa9a0;
   --cat-dilemma: #a17f72;
-  --cat-all: #a99bb4;
+  --cat-all: #9aa3bd;
 
-  /* Player colors */
-  --player-ember: #e8615c;
-  --player-amber: #e89a3c;
-  --player-moss: #5fb37a;
-  --player-sky: #4fa8e8;
-  --player-orchid: #b15fd0;
-  --player-rose: #d96ba0;
+  /* Player colors — mirror the values in src/data/options.js */
+  --player-garnet: #e0525e;
+  --player-saffron: #edb140;
+  --player-jade: #42b48f;
+  --player-turquoise: #3fc1d4;
+  --player-amethyst: #a97bf0;
+  --player-rose: #ee8fb8;
 
   /* Shadows — dark theme uses surface elevation, not box-shadow */
   --shadow-sm: none;
@@ -108,30 +113,54 @@
   --avatar-lg: 64px;
 }
 
-/* ── Light theme override ─────────────────────────────────────────────────── */
+/* ── Light theme "Lapis Day" ──────────────────────────────────────────────── */
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme='dark']) {
-    --bg: #f7f1e8;
-    --surface: #fffdf9;
-    --surface-raised: #efe6d9;
-    --border: #dfd2c0;
-    --text: #211a29;
-    --text-muted: #6b5f76;
-    --shadow-sm: 0 1px 3px rgba(33, 26, 41, 0.08);
-    --shadow-md: 0 4px 12px rgba(33, 26, 41, 0.12);
-    --shadow-lg: 0 8px 24px rgba(33, 26, 41, 0.15);
+    --bg: #eef1f7;
+    --surface: #ffffff;
+    --surface-raised: #e1e6f0;
+    --border: #c9d1e0;
+    --text: #121a2e;
+    --text-muted: #55607a;
+    --brand: #3451c7;
+    --brand-hover: #2c46b0;
+    --brand-soft: rgba(52, 81, 199, 0.12);
+    --on-brand: #ffffff;
+    --accent: #7a5c24;
+    --accent-soft: rgba(122, 92, 36, 0.12);
+    --shadow-sm: 0 1px 3px rgba(18, 26, 46, 0.08);
+    --shadow-md: 0 4px 12px rgba(18, 26, 46, 0.12);
+    --shadow-lg: 0 8px 24px rgba(18, 26, 46, 0.15);
+    --player-garnet: #c03442;
+    --player-saffron: #8a6006;
+    --player-jade: #1b7558;
+    --player-turquoise: #0e7280;
+    --player-amethyst: #7a4fd0;
+    --player-rose: #b23f73;
   }
 }
 
 :root[data-theme='light'] {
-  --bg: #f7f1e8;
-  --surface: #fffdf9;
-  --surface-raised: #efe6d9;
-  --border: #dfd2c0;
-  --text: #211a29;
-  --text-muted: #6b5f76;
-  --shadow-sm: 0 1px 3px rgba(33, 26, 41, 0.08);
-  --shadow-md: 0 4px 12px rgba(33, 26, 41, 0.12);
-  --shadow-lg: 0 8px 24px rgba(33, 26, 41, 0.15);
+  --bg: #eef1f7;
+  --surface: #ffffff;
+  --surface-raised: #e1e6f0;
+  --border: #c9d1e0;
+  --text: #121a2e;
+  --text-muted: #55607a;
+  --brand: #3451c7;
+  --brand-hover: #2c46b0;
+  --brand-soft: rgba(52, 81, 199, 0.12);
+  --on-brand: #ffffff;
+  --accent: #7a5c24;
+  --accent-soft: rgba(122, 92, 36, 0.12);
+  --shadow-sm: 0 1px 3px rgba(18, 26, 46, 0.08);
+  --shadow-md: 0 4px 12px rgba(18, 26, 46, 0.12);
+  --shadow-lg: 0 8px 24px rgba(18, 26, 46, 0.15);
+  --player-garnet: #c03442;
+  --player-saffron: #8a6006;
+  --player-jade: #1b7558;
+  --player-turquoise: #0e7280;
+  --player-amethyst: #7a4fd0;
+  --player-rose: #b23f73;
 }

@@ -1,8 +1,8 @@
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: var(--space-3);
-  margin-top: var(--space-2);
+  max-width: 22rem;
 }
 
 .swatch {
@@ -22,7 +22,7 @@
   justify-content: center;
 }
 
-.swatch:hover {
+.swatch:hover:not(.taken) {
   transform: scale(1.06);
   box-shadow: 0 4px 12px color-mix(in srgb, var(--swatch-color) 40%, transparent);
 }
@@ -43,9 +43,24 @@
 
 .check {
   font-size: 1.1rem;
-  color: #fff;
+  color: var(--bg);
   font-weight: 700;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Held by another player: hollow tile in its color with the owner's initial */
+.taken {
+  cursor: not-allowed;
+  background-color: color-mix(in srgb, var(--swatch-color) 18%, transparent);
+  border: 2px dashed color-mix(in srgb, var(--swatch-color) 55%, transparent);
+}
+
+.initial {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--swatch-color);
   line-height: 1;
   pointer-events: none;
 }

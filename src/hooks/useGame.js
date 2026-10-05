@@ -16,6 +16,9 @@ import {
   getAvailableDecades,
 } from '../assets/questions'
 import useLocalStorage from './useLocalStorage'
+import { avatars, colors } from '../data/options'
+import { STORAGE_VERSION } from '../data/ratings'
+import { rankPlayers } from '../game/scoring'
 
 const INITIAL_QUESTIONS = {
   spark: [...spark],
@@ -42,6 +45,11 @@ export default function useGame() {
   const [players, setPlayers, removePlayers] = useLocalStorage('gamePlayers', null)
   const [ratings, setRatings, removeRatings] = useLocalStorage('playerRatings', {})
   const [mode, setMode, removeMode] = useLocalStorage('gameMode', null)
+  const [storedCustomCategories, setCustomCategories, removeCustomCategories] = useLocalStorage(
+    'gameCustomCategories',
+    []
+  )
+  const customCategories = storedCustomCategories ?? []
   const [gameStarted, setGameStarted] = useState(false)
   const [phase, setPhase] = useState('selecting-mode')
   const [currentPlayer, setCurrentPlayer] = useState(0)
@@ -55,10 +63,18 @@ export default function useGame() {
   const [toast, setToast] = useState('')
   const [showLeaderboard, setShowLeaderboard] = useState(false)
 
-  // Migrate old {player1, player2} localStorage shape to array
+  // Saved data from an older storage version: drop ratings, remap identity to current options
   useEffect(() => {
-    if (players && !Array.isArray(players)) {
-      setPlayers([players.player1, players.player2])
+    try {
+      if (localStorage.getItem('storageVersion') === String(STORAGE_VERSION)) return
+      localStorage.setItem('storageVersion', String(STORAGE_VERSION))
+    } catch (e) {
+      console.warn('useGame: storage unavailable, skipping saved-data upgrade:', e)
+      return
+    }
+    if (Array.isArray(players) && players.length <= avatars.length) {
+      setPlayers(players.map((p, i) => ({ ...p, avatar: avatars[i].name, color: colors[i].value })))
+      setRatings(Object.fromEntries(players.map((p) => [p.name, []])))
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -72,8 +88,10 @@ export default function useGame() {
     setPhase(mode ? 'selecting-category' : 'selecting-mode')
   }, [players]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const isInMode = ([key, cat]) =>
+    mode === 'custom' ? customCategories.includes(key) : cat.modes?.includes(mode)
   const filteredCategories = mode
-    ? Object.fromEntries(Object.entries(categories).filter(([, cat]) => cat.modes?.includes(mode)))
+    ? Object.fromEntries(Object.entries(categories).filter(isInMode))
     : categories
 
   const calculateAvailableCounts = () => {
@@ -141,10 +159,11 @@ export default function useGame() {
     })
   }
 
-  const startGame = ({ players: playerArray, mode: gameMode }) => {
+  const startGame = ({ players: playerArray, mode: gameMode, customCategories: picked = [] }) => {
     setPlayers(playerArray)
     setRatings(Object.fromEntries(playerArray.map((p) => [p.name, []])))
     setMode(gameMode)
+    setCustomCategories(gameMode === 'custom' ? picked : [])
     setGameStarted(true)
     setCategoryQuestions({ ...INITIAL_QUESTIONS })
     setCurrentPlayer(0)
@@ -152,7 +171,17 @@ export default function useGame() {
   }
 
   const selectMode = (selectedMode) => {
+    if (selectedMode === 'custom') {
+      withTransition(() => setPhase('selecting-custom-categories'))
+      return
+    }
     setMode(selectedMode)
+    withTransition(() => setPhase('selecting-category'))
+  }
+
+  const confirmCustomCategories = (picked) => {
+    setCustomCategories(picked)
+    setMode('custom')
     withTransition(() => setPhase('selecting-category'))
   }
 
@@ -163,6 +192,7 @@ export default function useGame() {
     removePlayers()
     removeRatings()
     removeMode()
+    removeCustomCategories()
     setCategoryQuestions({ ...INITIAL_QUESTIONS })
     setCurrentPlayer(0)
     setPhase('selecting-mode')
@@ -261,7 +291,10 @@ export default function useGame() {
     setSelectedDecade(null)
 
     withTransition(() => {
-      const total = Object.values(categoryQuestions).reduce((s, a) => s + a.length, 0)
+      const total = Object.keys(filteredCategories).reduce(
+        (sum, key) => sum + (categoryQuestions[key]?.length || 0),
+        0
+      )
       if (total === 0) {
         setPhase('game-over')
         return
@@ -279,19 +312,7 @@ export default function useGame() {
     }
   }
 
-  const sortedPlayers = Array.isArray(players)
-    ? [...players]
-        .map((p) => ({
-          ...p,
-          average: (() => {
-            const r = ratings[p.name]
-            if (!r || r.length === 0) return 0
-            return (r.reduce((a, v) => a + v, 0) / r.length).toFixed(2)
-          })(),
-          totalRatings: ratings[p.name]?.length || 0,
-        }))
-        .sort((a, b) => b.average - a.average)
-    : []
+  const sortedPlayers = Array.isArray(players) ? rankPlayers(players, ratings) : []
 
   return {
     gameStarted,
@@ -309,10 +330,12 @@ export default function useGame() {
     showLeaderboard,
     ratings,
     mode,
+    customCategories,
     filteredCategories,
     sortedPlayers,
     startGame,
     selectMode,
+    confirmCustomCategories,
     showModeSelector,
     resetGame,
     replayGame,

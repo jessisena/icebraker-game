@@ -74,6 +74,11 @@
       "title": "¿Cambiar de jugadores?",
       "message": "Se perderán todas las calificaciones actuales.",
       "confirm": "Sí, cambiar"
+    },
+    "exitApp": {
+      "title": "¿Salir del juego?",
+      "message": "La partida queda guardada y podrás seguir al volver.",
+      "confirm": "Salir"
     }
   },
   "question": {

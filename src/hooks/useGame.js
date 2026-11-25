@@ -20,6 +20,7 @@ import { avatars, colors } from '../data/options'
 import { STORAGE_VERSION } from '../data/ratings'
 import { rankPlayers } from '../game/scoring'
 import { toRemainingIds, fromRemainingIds } from '../game/pool'
+import { exitApp, tap, buzz } from '../native/platform'
 
 const INITIAL_QUESTIONS = {
   spark: [...spark],
@@ -249,6 +250,7 @@ export default function useGame() {
   }
 
   const handleCategorySelect = (categoryKey) => {
+    tap()
     setSelectedCategory(categoryKey)
     const meta = categories[categoryKey]
     if (meta?.specialBehavior === 'music-trivia') {
@@ -299,11 +301,13 @@ export default function useGame() {
   }
 
   const handleTimerComplete = () => {
+    buzz()
     setTimerActive(false)
     setPhase('showing-rating')
   }
 
   const submitRating = (rating) => {
+    tap()
     setRatings((prev) => ({
       ...prev,
       [playerWhoAnswered]: [...(prev[playerWhoAnswered] || []), rating],
@@ -386,6 +390,25 @@ export default function useGame() {
     return backFromPhase()
   }
 
+  /**
+   * Ask before closing the app so a game in progress isn't left by accident.
+   *
+   * @returns {boolean} True if the confirm opened; false outside a game, where exiting is harmless.
+   */
+  const offerExit = () => {
+    if (!gameStarted) return false
+    setConfirmModal({
+      title: t('modal.exitApp.title'),
+      message: t('modal.exitApp.message'),
+      confirmLabel: t('modal.exitApp.confirm'),
+      onConfirm: () => {
+        setConfirmModal(null)
+        exitApp()
+      },
+    })
+    return true
+  }
+
   const sortedPlayers = Array.isArray(players) ? rankPlayers(players, ratings) : []
 
   return {
@@ -420,6 +443,7 @@ export default function useGame() {
     submitRating,
     handleSkip,
     goBack,
+    offerExit,
     calculateAvailableCounts,
     calculateSongsByDecade,
     setConfirmModal,

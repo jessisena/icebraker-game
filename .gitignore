@@ -25,3 +25,7 @@ dist-ssr
 
 # Local Claude Code settings
 .claude/settings.local.json
+
+# Android signing keys live outside the repo; never commit one
+*.jks
+*.keystore

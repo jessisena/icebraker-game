@@ -1,5 +1,5 @@
 /* The only module that talks to Capacitor. Every export is a no-op in the browser. */
-import { Capacitor } from '@capacitor/core'
+import { Capacitor, SystemBars, SystemBarsStyle } from '@capacitor/core'
 import { App } from '@capacitor/app'
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics'
 
@@ -19,6 +19,13 @@ export function onBackButton(onBack) {
   return () => {
     handle.then((h) => h.remove()).catch(warnOnFailure('removing back listener'))
   }
+}
+
+/* Status and navigation bar icons must contrast with the app theme, not the device theme */
+export function matchSystemBarsToTheme(themeMode) {
+  if (!isNative()) return
+  const style = themeMode === 'light' ? SystemBarsStyle.Light : SystemBarsStyle.Dark
+  SystemBars.setStyle({ style }).catch(warnOnFailure('styling system bars'))
 }
 
 export function exitApp() {

@@ -4,7 +4,7 @@ import i18n from './i18n'
 import useGame from './hooks/useGame'
 import useLocalStorage from './hooks/useLocalStorage'
 import { useBackHandler, handleBack } from './native/backHandler'
-import { onBackButton, exitApp } from './native/platform'
+import { onBackButton, exitApp, matchSystemBarsToTheme } from './native/platform'
 import Onboarding from './components/onboarding/Onboarding'
 import ModeSelector from './components/ModeSelector'
 import CustomCategoryPicker from './components/CustomCategoryPicker'
@@ -28,6 +28,7 @@ function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode
+    matchSystemBarsToTheme(themeMode)
   }, [themeMode])
   useEffect(() => {
     i18n.changeLanguage(lang)

@@ -2,5 +2,10 @@
   "appId": "io.github.jessisena.icebraker",
   "appName": "Preguntados",
   "webDir": "dist",
-  "backgroundColor": "#121a2e"
+  "backgroundColor": "#121a2e",
+  "plugins": {
+    "SystemBars": {
+      "style": "DARK"
+    }
+  }
 }

@@ -5,6 +5,8 @@ const removeListener = vi.fn()
 
 vi.mock('@capacitor/core', () => ({
   Capacitor: { isNativePlatform: () => native.value },
+  SystemBars: { setStyle: vi.fn(() => Promise.resolve()) },
+  SystemBarsStyle: { Dark: 'DARK', Light: 'LIGHT' },
 }))
 vi.mock('@capacitor/app', () => ({
   App: {
@@ -21,9 +23,10 @@ vi.mock('@capacitor/haptics', () => ({
   NotificationType: { Warning: 'WARNING' },
 }))
 
+const { SystemBars } = await import('@capacitor/core')
 const { App } = await import('@capacitor/app')
 const { Haptics } = await import('@capacitor/haptics')
-const { onBackButton, exitApp, tap, buzz } = await import('./platform')
+const { onBackButton, exitApp, tap, buzz, matchSystemBarsToTheme } = await import('./platform')
 
 describe('native platform', () => {
   beforeEach(() => {
@@ -54,6 +57,15 @@ describe('native platform', () => {
     expect(Haptics.notification).toHaveBeenCalledWith({ type: 'WARNING' })
   })
 
+  it.each([
+    ['dark', 'DARK'],
+    ['light', 'LIGHT'],
+  ])('gives the %s theme system bar icons that contrast with it', (theme, style) => {
+    matchSystemBarsToTheme(theme)
+
+    expect(SystemBars.setStyle).toHaveBeenCalledWith({ style })
+  })
+
   it('does nothing in the browser', () => {
     native.value = false
 
@@ -61,7 +73,9 @@ describe('native platform', () => {
     exitApp()
     tap()
     buzz()
+    matchSystemBarsToTheme('dark')
 
+    expect(SystemBars.setStyle).not.toHaveBeenCalled()
     expect(App.addListener).not.toHaveBeenCalled()
     expect(App.exitApp).not.toHaveBeenCalled()
     expect(Haptics.impact).not.toHaveBeenCalled()

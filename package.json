@@ -13,7 +13,8 @@
     "format": "prettier --write \"src/**/*.{js,jsx,css}\"",
     "format:check": "prettier --check \"src/**/*.{js,jsx,css}\"",
     "build:android": "vite build --mode android && cap sync android",
-    "android:open": "cap open android"
+    "android:open": "cap open android",
+    "apk": "npm run build:android && cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
     "@capacitor/android": "^8.6.2",

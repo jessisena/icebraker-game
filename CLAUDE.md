@@ -75,7 +75,14 @@ On reload, `phase` is not stored. It is worked out from the saved state: no mode
 - `mode` — `'couples' | 'friends' | 'team' | 'custom'` (persisted via `gameMode` key)
 - `customCategories` — Category keys chosen for Custom mode (persisted via `gameCustomCategories` key)
 
-Key actions: `startGame({players, mode, customCategories})`, `selectMode(mode)`, `confirmCustomCategories(keys)`, `showModeSelector()`, `submitRating(value)`, `replayGame()`, `resetGame()`.
+Key actions: `startGame({players, mode, customCategories})`, `selectMode(mode)`, `confirmCustomCategories(keys)`, `showModeSelector()`, `submitRating(value)`, `replayGame()`, `resetGame()`, `goBack()`.
+
+`goBack()` handles the Android back button and returns `true` if it did something. Order:
+1. Close the confirm modal.
+2. Close the leaderboard.
+3. Step back one screen: question/decade/mode → category pick, custom picker → mode picker. A question that is left goes back into the pool it was drawn from.
+
+It returns `false` on the category pick, the rating and game over. Callers register it with `useBackHandler` from `src/native/backHandler.js`, a stack where the newest handler is asked first. Onboarding registers its own step-back handler.
 
 `onComplete` payload from `Onboarding` is `{ players: [{name, avatar, color}, ...], mode, customCategories }`.
 

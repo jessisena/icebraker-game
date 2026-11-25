@@ -1,9 +1,10 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { I18nextProvider } from 'react-i18next'
 import i18n from '../../i18n'
 import Onboarding from './Onboarding'
+import { handleBack } from '../../native/backHandler'
 
 function renderOnboarding(onComplete = vi.fn()) {
   return render(
@@ -81,6 +82,20 @@ describe('Onboarding — step 1: mode selection', () => {
     const segments = screen.getAllByRole('button', { name: /step 1 of 2/i })
     await user.click(segments[0])
     expect(screen.getByText(/step 1 of 2/i)).toBeInTheDocument()
+  })
+
+  it('the back button steps from the roster to the mode step, then has nothing left', async () => {
+    const user = userEvent.setup()
+    renderOnboarding()
+    await pickMode(user, /friends/i)
+
+    let handled
+    act(() => {
+      handled = handleBack()
+    })
+    expect(handled).toBe(true)
+    expect(await screen.findByText(/step 1 of 2/i)).toBeInTheDocument()
+    expect(handleBack()).toBe(false)
   })
 })
 

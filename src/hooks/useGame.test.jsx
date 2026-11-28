@@ -142,6 +142,113 @@ describe('useGame — session restore', () => {
   })
 })
 
+describe('useGame — resuming an in-progress game', () => {
+  beforeEach(() => {
+    clearGameStorage()
+    i18n.changeLanguage('en')
+    localStorage.setItem('storageVersion', String(STORAGE_VERSION))
+  })
+
+  const playOneTurn = (result, category = 'spark') => {
+    act(() => result.current.handleCategorySelect(category))
+    act(() => result.current.proceedToRating())
+    act(() => result.current.submitRating(RATING.good))
+  }
+
+  it('resumes on the same turn without returning used questions', () => {
+    const first = renderHook(() => useGame(), { wrapper })
+    act(() => first.result.current.startGame({ players: FOUR_PLAYERS, mode: 'friends' }))
+    playOneTurn(first.result)
+    playOneTurn(first.result)
+    const remaining = first.result.current.categoryQuestions.spark
+    first.unmount()
+
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.gameStarted).toBe(true)
+    expect(result.current.phase).toBe('selecting-category')
+    expect(result.current.currentPlayer).toBe(2)
+    expect(result.current.categoryQuestions.spark).toEqual(remaining)
+    expect(result.current.ratings).toMatchObject({ Alice: [2], Bob: [2], Carol: [] })
+  })
+
+  it('keeps the turn when the app is closed mid-question', () => {
+    const first = renderHook(() => useGame(), { wrapper })
+    act(() => first.result.current.startGame({ players: FOUR_PLAYERS, mode: 'friends' }))
+    playOneTurn(first.result)
+    act(() => first.result.current.handleCategorySelect('spark'))
+    first.unmount()
+
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.phase).toBe('selecting-category')
+    expect(result.current.currentPlayer).toBe(1)
+  })
+
+  it('resumes at game over when every pool in the mode is empty', () => {
+    localStorage.setItem('gamePlayers', JSON.stringify(FOUR_PLAYERS))
+    localStorage.setItem('gameMode', JSON.stringify('custom'))
+    localStorage.setItem('gameCustomCategories', JSON.stringify(['dilemma']))
+    localStorage.setItem('gameRemaining', JSON.stringify({ dilemma: [] }))
+
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.phase).toBe('game-over')
+  })
+
+  it('falls back to the first player when the saved index is out of range', () => {
+    localStorage.setItem('gamePlayers', JSON.stringify(FOUR_PLAYERS.slice(0, 2)))
+    localStorage.setItem('gameMode', JSON.stringify('friends'))
+    localStorage.setItem('gameCurrentPlayer', '5')
+
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.currentPlayer).toBe(0)
+  })
+
+  it('drops saved question ids that no longer exist', () => {
+    localStorage.setItem('gamePlayers', JSON.stringify(FOUR_PLAYERS))
+    localStorage.setItem('gameMode', JSON.stringify('friends'))
+    localStorage.setItem('gameRemaining', JSON.stringify({ spark: ['spark-1', 'spark-deleted'] }))
+
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.categoryQuestions.spark.map((q) => q.id)).toEqual(['spark-1'])
+  })
+
+  it('replayGame restores the full pool and the first player in storage', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+    act(() => result.current.startGame({ players: FOUR_PLAYERS, mode: 'friends' }))
+    playOneTurn(result)
+
+    act(() => result.current.replayGame())
+
+    expect(localStorage.getItem('gameCurrentPlayer')).toBe('0')
+    const saved = JSON.parse(localStorage.getItem('gameRemaining'))
+    expect(saved.spark).toHaveLength(result.current.categoryQuestions.spark.length)
+    expect(result.current.categoryQuestions.spark.length).toBeGreaterThan(0)
+    expect(saved.spark).toContain(result.current.categoryQuestions.spark[0].id)
+  })
+
+  it('resetGame clears the saved turn and pool', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+    act(() => result.current.startGame({ players: FOUR_PLAYERS, mode: 'friends' }))
+    playOneTurn(result)
+
+    act(() => result.current.resetGame())
+    act(() => result.current.confirmModal.onConfirm())
+
+    expect(localStorage.getItem('gameCurrentPlayer')).toBeNull()
+    expect(localStorage.getItem('gameRemaining')).toBeNull()
+  })
+
+  it('does not save a pool before a game starts', () => {
+    renderHook(() => useGame(), { wrapper })
+
+    expect(localStorage.getItem('gameRemaining')).toBeNull()
+  })
+})
+
 describe('useGame — storage version migration', () => {
   beforeEach(() => {
     clearGameStorage()

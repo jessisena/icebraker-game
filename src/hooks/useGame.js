@@ -19,6 +19,7 @@ import useLocalStorage from './useLocalStorage'
 import { avatars, colors } from '../data/options'
 import { STORAGE_VERSION } from '../data/ratings'
 import { rankPlayers } from '../game/scoring'
+import { toRemainingIds, fromRemainingIds } from '../game/pool'
 
 const INITIAL_QUESTIONS = {
   spark: [...spark],
@@ -52,12 +53,26 @@ export default function useGame() {
   const customCategories = storedCustomCategories ?? []
   const [gameStarted, setGameStarted] = useState(false)
   const [phase, setPhase] = useState('selecting-mode')
-  const [currentPlayer, setCurrentPlayer] = useState(0)
+  const [storedCurrentPlayer, setCurrentPlayer, removeCurrentPlayer] = useLocalStorage(
+    'gameCurrentPlayer',
+    0
+  )
+  const playerCount = Array.isArray(players) ? players.length : 0
+  const currentPlayer =
+    Number.isInteger(storedCurrentPlayer) && storedCurrentPlayer < playerCount
+      ? storedCurrentPlayer
+      : 0
+  const [savedRemaining, setSavedRemaining, removeSavedRemaining] = useLocalStorage(
+    'gameRemaining',
+    null
+  )
   const [currentQuestion, setCurrentQuestion] = useState(null)
   const [playerWhoAnswered, setPlayerWhoAnswered] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [selectedDecade, setSelectedDecade] = useState(null)
-  const [categoryQuestions, setCategoryQuestions] = useState(INITIAL_QUESTIONS)
+  const [categoryQuestions, setCategoryQuestions] = useState(() =>
+    fromRemainingIds(INITIAL_QUESTIONS, savedRemaining)
+  )
   const [timerActive, setTimerActive] = useState(false)
   const [confirmModal, setConfirmModal] = useState(null)
   const [toast, setToast] = useState('')
@@ -85,14 +100,26 @@ export default function useGame() {
     if (!ratings || Object.keys(ratings).length === 0) {
       setRatings(Object.fromEntries(players.map((p) => [p.name, []])))
     }
-    setPhase(mode ? 'selecting-category' : 'selecting-mode')
+    if (!mode) {
+      setPhase('selecting-mode')
+      return
+    }
+    setPhase(remainingInMode(categoryQuestions) === 0 ? 'game-over' : 'selecting-category')
   }, [players]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (gameStarted) setSavedRemaining(toRemainingIds(categoryQuestions))
+  }, [gameStarted, categoryQuestions]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const isInMode = ([key, cat]) =>
     mode === 'custom' ? customCategories.includes(key) : cat.modes?.includes(mode)
   const filteredCategories = mode
     ? Object.fromEntries(Object.entries(categories).filter(isInMode))
     : categories
+
+  function remainingInMode(pool) {
+    return Object.keys(filteredCategories).reduce((sum, key) => sum + (pool[key]?.length || 0), 0)
+  }
 
   const calculateAvailableCounts = () => {
     const counts = Object.fromEntries(
@@ -193,8 +220,9 @@ export default function useGame() {
     removeRatings()
     removeMode()
     removeCustomCategories()
+    removeCurrentPlayer()
+    removeSavedRemaining()
     setCategoryQuestions({ ...INITIAL_QUESTIONS })
-    setCurrentPlayer(0)
     setPhase('selecting-mode')
     setPlayerWhoAnswered(null)
     setShowLeaderboard(false)
@@ -291,11 +319,7 @@ export default function useGame() {
     setSelectedDecade(null)
 
     withTransition(() => {
-      const total = Object.keys(filteredCategories).reduce(
-        (sum, key) => sum + (categoryQuestions[key]?.length || 0),
-        0
-      )
-      if (total === 0) {
+      if (remainingInMode(categoryQuestions) === 0) {
         setPhase('game-over')
         return
       }

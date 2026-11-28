@@ -9,6 +9,7 @@ See `docs/` for the full redesign plan and design system reference.
 - `src/App.jsx` — Shell: renders onboarding or the active game phase; all game logic is in `useGame`
 - `src/hooks/useGame.js` — All game state and actions (phase, players array, ratings, categoryQuestions, currentPlayer, mode, customCategories)
 - `src/game/scoring.js` — `rankPlayers(players, ratings)`: total points, 👍/😐/👎 tally, turns; sorted for the leaderboard
+- `src/game/pool.js` — `toRemainingIds` / `fromRemainingIds`: save the question pool as ids (`q.id`, or `year|artist|title` for songs) and rebuild it on load
 - `src/components/` — Game UI
   - `onboarding/Onboarding.jsx` — Wizard: mode → categories (Custom only) → roster
   - `onboarding/ModeStep.jsx` — Mode picker (Couples/Friends/Team/Custom)
@@ -62,8 +63,10 @@ After rating, `currentPlayer` advances round-robin `(currentPlayer + 1) % player
 Game state lives in `src/hooks/useGame.js`:
 - `players` — Array of `{name, avatar, color}` objects, 2–6 entries (persisted via `gamePlayers` key)
 - `ratings` — Object mapping player names to arrays of vote values 2/1/0 (persisted via `playerRatings` key)
-- `categoryQuestions` — Object mapping category keys to remaining question arrays (shrinks as used; reset on `startGame`)
-- `currentPlayer` — Index into the `players` array (0-based)
+- `categoryQuestions` — Object mapping category keys to remaining question arrays (shrinks as used; reset on `startGame`). Persisted as remaining ids via the `gameRemaining` key (see `src/game/pool.js`)
+- `currentPlayer` — Index into the `players` array (0-based; persisted via `gameCurrentPlayer`, falls back to 0 if out of range)
+
+On reload, `phase` is not stored. It is worked out from the saved state: no mode → `selecting-mode`, every pool in the mode empty → `game-over`, otherwise → `selecting-category`. A turn interrupted mid-question resumes on the same player's category pick.
 - `phase` — Controls the state machine
 - `playerWhoAnswered` — Name of the player who just answered (for the rating panel)
 - `selectedCategory` — Key of the current category

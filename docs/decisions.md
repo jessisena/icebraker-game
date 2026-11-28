@@ -4,6 +4,21 @@ A running log of decisions and their rationale, newest-first.
 
 ---
 
+## 2026-11-25 — Persist the current turn and question pool
+
+**Decision:** Save `currentPlayer` (`gameCurrentPlayer`) and the remaining question ids per category (`gameRemaining`) to localStorage. On reload, the phase is worked out from that state instead of being stored. `STORAGE_VERSION` stays at 2.
+
+**Why:**
+- Android kills apps in the background, and a reloaded browser tab has the same problem. Until now a resumed game restarted at player 1 with every question back in the pool.
+- Saving ids rather than question objects keeps saved games valid when question text or translations change. Deleted ids are dropped.
+- A stored phase would duplicate what the turn and pool already say. Mid-turn phases (question, rating, decade) never resume, so a reload can't land on a half-finished turn.
+- The new keys are additive. Saves from before this change have no pool and start full, which matches the old behaviour, so a version bump would only wipe scores for no reason.
+
+**Alternatives rejected:**
+- Persisting `phase` and `currentQuestion`: resuming mid-rating needs `playerWhoAnswered` and the timer state too, for little benefit.
+
+---
+
 ## 2026-10-04 — Custom mode, Good/Neutral/Bad votes, Lapis Night identity
 
 **Decision:**

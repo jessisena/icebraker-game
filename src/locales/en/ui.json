@@ -74,6 +74,11 @@
       "title": "Change players?",
       "message": "All current ratings will be lost.",
       "confirm": "Yes, change"
+    },
+    "exitApp": {
+      "title": "Leave the game?",
+      "message": "Your game is saved, so you can pick up where you left off.",
+      "confirm": "Leave"
     }
   },
   "question": {

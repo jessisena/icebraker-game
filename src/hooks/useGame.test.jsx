@@ -382,6 +382,35 @@ describe('useGame — goBack', () => {
   })
 })
 
+describe('useGame — offerExit', () => {
+  beforeEach(() => {
+    clearGameStorage()
+    i18n.changeLanguage('en')
+  })
+
+  it('opens an exit confirm during a game, which back then closes', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+    act(() => result.current.startGame({ players: FOUR_PLAYERS, mode: 'friends' }))
+
+    let opened
+    act(() => {
+      opened = result.current.offerExit()
+    })
+
+    expect(opened).toBe(true)
+    expect(result.current.confirmModal.title).toBe('Leave the game?')
+    act(() => result.current.goBack())
+    expect(result.current.confirmModal).toBeNull()
+  })
+
+  it('does not ask outside a game', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.offerExit()).toBe(false)
+    expect(result.current.confirmModal).toBeNull()
+  })
+})
+
 describe('useGame — storage version migration', () => {
   beforeEach(() => {
     clearGameStorage()

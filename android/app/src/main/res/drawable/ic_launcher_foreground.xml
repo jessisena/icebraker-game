@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The eye Arcana emblem from src/components/AvatarGlyph.jsx (viewBox 0 0 100 100),
+     scaled 0.6 and centred in the 66dp safe zone of a 108dp adaptive icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="0.6"
+        android:scaleY="0.6"
+        android:translateX="24"
+        android:translateY="19.2">
+        <path
+            android:pathData="M8,58 Q50,20 92,58 Q50,96 8,58 Z"
+            android:strokeColor="@color/lapis_bone"
+            android:strokeWidth="5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:pathData="M38,58 A12,12 0 1,0 62,58 A12,12 0 1,0 38,58 Z"
+            android:strokeColor="@color/lapis_bone"
+            android:strokeWidth="5" />
+        <path
+            android:fillColor="@color/lapis_bone"
+            android:pathData="M45,58 A5,5 0 1,0 55,58 A5,5 0 1,0 45,58 Z" />
+        <path
+            android:pathData="M50,32 V20 M27,37 L22,28 M73,37 L78,28"
+            android:strokeColor="@color/lapis_brass"
+            android:strokeWidth="3"
+            android:strokeLineCap="round" />
+    </group>
+</vector>

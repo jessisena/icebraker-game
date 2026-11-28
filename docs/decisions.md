@@ -4,6 +4,24 @@ A running log of decisions and their rationale, newest-first.
 
 ---
 
+## 2026-11-25 — Android app via Capacitor, sideloaded APK
+
+**Decision:** Wrap the existing web build in a Capacitor 8 Android project in `android/`. APKs are built and signed locally and shared by hand; there is no Play Store listing and no automated release. Native extras: hardware back button, haptics, keep-screen-on and an adaptive icon and splash. `minSdk` is 26, and the app has no `INTERNET` permission.
+
+**Why:**
+- The game is fully client-side, so a WebView wrapper keeps 100% of the UI code and one codebase for web and Android.
+- Sideloading among friends doesn't need a store account, review or privacy listing. A single long-lived signing key kept outside the repo is enough, as long as it's backed up.
+- Keep-screen-on is a window flag in `MainActivity`, not a plugin. The icon and splash are vector drawables of an existing emblem, not generated PNGs. Each avoids a dependency.
+- `minSdk` 26 means the adaptive icon covers every supported device, with no legacy PNG icon set.
+- Back during a game asks before exiting. Outside a game it exits directly, which is standard Android behaviour and loses nothing.
+
+**Alternatives rejected:**
+- PWA + Trusted Web Activity: depends on the hosted site being reachable, and Bubblewrap is aimed at Play distribution.
+- React Native or Kotlin rewrite: every component rebuilt, and two UIs to keep in sync.
+- GitHub Actions release workflow with signing secrets: not needed while APKs are shared by hand. CI runs an unsigned debug build and Android lint only.
+
+---
+
 ## 2026-11-25 — Persist the current turn and question pool
 
 **Decision:** Save `currentPlayer` (`gameCurrentPlayer`) and the remaining question ids per category (`gameRemaining`) to localStorage. On reload, the phase is worked out from that state instead of being stored. `STORAGE_VERSION` stays at 2.

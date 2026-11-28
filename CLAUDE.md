@@ -28,10 +28,13 @@ See `docs/` for the full redesign plan and design system reference.
   - `pickers/ColorPicker.jsx` — Player color swatches; taken colors show the owner's initial
   - `pickers/roving.js` — Arrow-key navigation that skips taken options
 - `src/hooks/useLocalStorage.js` — Custom hook returning `[state, setState, remove]`, auto-syncs with localStorage
-- `src/assets/questions.js` — Question data: ~245 text questions + ~180 songs across 9 categories
+- `src/assets/questions.js` — Question data: ~245 text questions + 115 songs across 9 categories
 - `src/data/options.js` — 6 avatars and 6 colors (one of each per player at 6-player max); color values are `var(--player-*)` tokens so each theme supplies its own shade
 - `src/data/ratings.js` — `RATING` vote values and `STORAGE_VERSION` (bump when the persisted shape changes; stale ratings are cleared on load)
 - `src/styles/tokens.css` — Design tokens (colors, spacing, typography)
+- `src/native/platform.js` — The only module that imports `@capacitor/*`: back-button listener, `exitApp`, haptics (`tap`/`buzz`), system bar style. Every export is a no-op in the browser
+- `src/native/backHandler.js` — Stack of back handlers (`useBackHandler`, `handleBack`); newest is asked first
+- `android/` — Capacitor 8 project (committed). Icon/splash are vector drawables of the eye emblem; `MainActivity` sets keep-screen-on; release signing reads `ICEBRAKER_*` from `~/.gradle/gradle.properties`; Android lint runs with `warningsAsErrors`
 
 ## Commands
 
@@ -45,6 +48,11 @@ See `docs/` for the full redesign plan and design system reference.
 | `npm run test:watch` | Vitest in watch mode |
 | `npm run format` | Format src with Prettier |
 | `npm run format:check` | Check formatting (CI) |
+| `npm run build:android` | Web build with relative `base` + `cap sync android` |
+| `npm run android:open` | Open `android/` in Android Studio |
+| `npm run apk` | Signed release APK → `android/app/build/outputs/apk/release/` |
+
+Android builds need `ANDROID_HOME` (here: `/opt/homebrew/share/android-commandlinetools`) and JDK 21 (`JAVA_HOME=$(/usr/libexec/java_home -v 21)`; the default JDK 27 is too new for Gradle). After changing anything in `src/`, rerun `build:android` before building the Android project.
 
 <important if="you are modifying App.jsx or working with game flow">
 
@@ -75,7 +83,14 @@ On reload, `phase` is not stored. It is worked out from the saved state: no mode
 - `mode` — `'couples' | 'friends' | 'team' | 'custom'` (persisted via `gameMode` key)
 - `customCategories` — Category keys chosen for Custom mode (persisted via `gameCustomCategories` key)
 
-Key actions: `startGame({players, mode, customCategories})`, `selectMode(mode)`, `confirmCustomCategories(keys)`, `showModeSelector()`, `submitRating(value)`, `replayGame()`, `resetGame()`.
+Key actions: `startGame({players, mode, customCategories})`, `selectMode(mode)`, `confirmCustomCategories(keys)`, `showModeSelector()`, `submitRating(value)`, `replayGame()`, `resetGame()`, `goBack()`.
+
+`goBack()` handles the Android back button and returns `true` if it did something. Order:
+1. Close the confirm modal.
+2. Close the leaderboard.
+3. Step back one screen: question/decade/mode → category pick, custom picker → mode picker. A question that is left goes back into the pool it was drawn from.
+
+It returns `false` on the category pick, the rating and game over. Callers register it with `useBackHandler` from `src/native/backHandler.js`, a stack where the newest handler is asked first. Onboarding registers its own step-back handler.
 
 `onComplete` payload from `Onboarding` is `{ players: [{name, avatar, color}, ...], mode, customCategories }`.
 

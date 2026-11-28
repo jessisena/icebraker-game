@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lapis Night tokens from src/styles/tokens.css (dark theme) -->
+<resources>
+    <color name="lapis_ground">#121A2E</color>
+    <color name="lapis_bone">#EEE6D6</color>
+    <color name="lapis_brass">#C9A45C</color>
+    <color name="colorPrimary">#121A2E</color>
+    <color name="colorPrimaryDark">#121A2E</color>
+    <color name="colorAccent">#C9A45C</color>
+</resources>

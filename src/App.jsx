@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import i18n from './i18n'
 import useGame from './hooks/useGame'
 import useLocalStorage from './hooks/useLocalStorage'
+import { useBackHandler, handleBack } from './native/backHandler'
+import { onBackButton, exitApp, matchSystemBarsToTheme } from './native/platform'
 import Onboarding from './components/onboarding/Onboarding'
 import ModeSelector from './components/ModeSelector'
 import CustomCategoryPicker from './components/CustomCategoryPicker'
@@ -26,6 +28,7 @@ function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode
+    matchSystemBarsToTheme(themeMode)
   }, [themeMode])
   useEffect(() => {
     i18n.changeLanguage(lang)
@@ -33,6 +36,14 @@ function App() {
   }, [lang])
 
   const game = useGame()
+  useBackHandler(() => game.goBack() || game.offerExit())
+  useEffect(
+    () =>
+      onBackButton(() => {
+        if (!handleBack()) exitApp()
+      }),
+    []
+  )
 
   const toggleLang = () => setLang((l) => (l === 'es' ? 'en' : 'es'))
   const toggleTheme = () => setThemeMode((m) => (m === 'dark' ? 'light' : 'dark'))

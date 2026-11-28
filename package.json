@@ -11,9 +11,16 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "format": "prettier --write \"src/**/*.{js,jsx,css}\"",
-    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\""
+    "format:check": "prettier --check \"src/**/*.{js,jsx,css}\"",
+    "build:android": "vite build --mode android && cap sync android",
+    "android:open": "cap open android",
+    "apk": "npm run build:android && cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/haptics": "^8.0.2",
     "i18next": "^26.4.2",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
@@ -21,6 +28,7 @@
     "react-i18next": "^17.0.13"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.6.2",
     "@eslint/js": "^9.19.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useTranslation } from 'react-i18next'
 import { avatars, colors } from '../../data/options'
+import { useBackHandler } from '../../native/backHandler'
 import ModeStep from './ModeStep'
 import CategoryStep from './CategoryStep'
 import RosterStep from './RosterStep'
@@ -34,6 +35,12 @@ export default function Onboarding({ onComplete, prefsSlot }) {
       setStep(nextStep)
     }
   }
+
+  useBackHandler(() => {
+    if (step === 0) return false
+    goTo(step - 1)
+    return true
+  })
 
   const handleModeNext = () => {
     // Clamp roster to 2 when switching to couples (user may have gone back after adding players)

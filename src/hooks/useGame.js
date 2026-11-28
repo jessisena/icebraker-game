@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import {
@@ -20,6 +20,7 @@ import { avatars, colors } from '../data/options'
 import { STORAGE_VERSION } from '../data/ratings'
 import { rankPlayers } from '../game/scoring'
 import { toRemainingIds, fromRemainingIds } from '../game/pool'
+import { exitApp, tap, buzz } from '../native/platform'
 
 const INITIAL_QUESTIONS = {
   spark: [...spark],
@@ -73,6 +74,8 @@ export default function useGame() {
   const [categoryQuestions, setCategoryQuestions] = useState(() =>
     fromRemainingIds(INITIAL_QUESTIONS, savedRemaining)
   )
+  /* The question on screen and the pool it came from, so going back can return it */
+  const drawn = useRef(null)
   const [timerActive, setTimerActive] = useState(false)
   const [confirmModal, setConfirmModal] = useState(null)
   const [toast, setToast] = useState('')
@@ -161,25 +164,18 @@ export default function useGame() {
     const idx = Math.floor(Math.random() * available.length)
     const selected = available[idx]
 
+    const source =
+      category === 'all'
+        ? nonMusicKeys.find((k) => categoryQuestions[k]?.some((q) => q.id === selected.id))
+        : category
+
     withTransition(() => {
       setCurrentQuestion(selected)
-
-      if (category === 'all') {
-        const updated = { ...categoryQuestions }
-        for (const k of nonMusicKeys) {
-          const i = updated[k]?.findIndex((q) => q.id === selected.id)
-          if (i !== -1) {
-            updated[k] = updated[k].filter((_, j) => j !== i)
-            break
-          }
-        }
-        setCategoryQuestions(updated)
-      } else {
-        setCategoryQuestions((prev) => ({
-          ...prev,
-          [category]: prev[category].filter((_, i) => i !== idx),
-        }))
-      }
+      drawn.current = { category: source, question: selected }
+      setCategoryQuestions((prev) => ({
+        ...prev,
+        [source]: prev[source].filter((q) => q !== selected),
+      }))
 
       setPlayerWhoAnswered(players[currentPlayer].name)
       setPhase('showing-question')
@@ -254,6 +250,7 @@ export default function useGame() {
   }
 
   const handleCategorySelect = (categoryKey) => {
+    tap()
     setSelectedCategory(categoryKey)
     const meta = categories[categoryKey]
     if (meta?.specialBehavior === 'music-trivia') {
@@ -286,6 +283,7 @@ export default function useGame() {
         en: { q: `🎵 ${song[2]}`, explanation: `Artist: ${song[1]} | Year: ${song[0]}` },
         es: { q: `🎵 ${song[2]}`, explanation: `Artista: ${song[1]} | Año: ${song[0]}` },
       })
+      drawn.current = { category: 'decadesTape', question: song }
       setCategoryQuestions((prev) => ({
         ...prev,
         decadesTape: prev.decadesTape.filter(
@@ -303,11 +301,13 @@ export default function useGame() {
   }
 
   const handleTimerComplete = () => {
+    buzz()
     setTimerActive(false)
     setPhase('showing-rating')
   }
 
   const submitRating = (rating) => {
+    tap()
     setRatings((prev) => ({
       ...prev,
       [playerWhoAnswered]: [...(prev[playerWhoAnswered] || []), rating],
@@ -334,6 +334,79 @@ export default function useGame() {
     } else {
       getRandomQuestion(selectedCategory)
     }
+  }
+
+  const leaveQuestion = () => {
+    const { category, question } = drawn.current ?? {}
+    if (category) {
+      setCategoryQuestions((prev) => ({ ...prev, [category]: [...prev[category], question] }))
+    }
+    drawn.current = null
+    setTimerActive(false)
+    setPlayerWhoAnswered(null)
+    setSelectedDecade(null)
+  }
+
+  const backFromPhase = () => {
+    switch (phase) {
+      case 'showing-question':
+        leaveQuestion()
+        withTransition(() => setPhase('selecting-category'))
+        return true
+      case 'selecting-decade':
+        withTransition(() => setPhase('selecting-category'))
+        return true
+      case 'selecting-custom-categories':
+        withTransition(() => setPhase('selecting-mode'))
+        return true
+      case 'selecting-mode':
+        if (!mode) return false
+        withTransition(() => setPhase('selecting-category'))
+        return true
+      default:
+        return false
+    }
+  }
+
+  /**
+   * Undo one step of navigation, for the Android back button.
+   *
+   * Closes the confirm modal or leaderboard first, then steps back one screen. A question that is
+   * left goes back into its pool and the turn stays with the same player. Votes are never undone.
+   *
+   * @returns {boolean} False on screens with nothing to step back to (category pick, rating,
+   *   game over), so the caller can offer to exit.
+   */
+  const goBack = () => {
+    if (!gameStarted) return false
+    if (confirmModal) {
+      setConfirmModal(null)
+      return true
+    }
+    if (showLeaderboard) {
+      setShowLeaderboard(false)
+      return true
+    }
+    return backFromPhase()
+  }
+
+  /**
+   * Ask before closing the app so a game in progress isn't left by accident.
+   *
+   * @returns {boolean} True if the confirm opened; false outside a game, where exiting is harmless.
+   */
+  const offerExit = () => {
+    if (!gameStarted) return false
+    setConfirmModal({
+      title: t('modal.exitApp.title'),
+      message: t('modal.exitApp.message'),
+      confirmLabel: t('modal.exitApp.confirm'),
+      onConfirm: () => {
+        setConfirmModal(null)
+        exitApp()
+      },
+    })
+    return true
   }
 
   const sortedPlayers = Array.isArray(players) ? rankPlayers(players, ratings) : []
@@ -369,6 +442,8 @@ export default function useGame() {
     handleTimerComplete,
     submitRating,
     handleSkip,
+    goBack,
+    offerExit,
     calculateAvailableCounts,
     calculateSongsByDecade,
     setConfirmModal,

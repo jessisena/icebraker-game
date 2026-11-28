@@ -249,6 +249,168 @@ describe('useGame — resuming an in-progress game', () => {
   })
 })
 
+describe('useGame — goBack', () => {
+  beforeEach(() => {
+    clearGameStorage()
+    i18n.changeLanguage('en')
+    localStorage.setItem('storageVersion', String(STORAGE_VERSION))
+  })
+
+  const startFriends = () => {
+    const hook = renderHook(() => useGame(), { wrapper })
+    act(() => hook.result.current.startGame({ players: FOUR_PLAYERS, mode: 'friends' }))
+    return hook
+  }
+
+  const goBack = (result) => {
+    let handled
+    act(() => {
+      handled = result.current.goBack()
+    })
+    return handled
+  }
+
+  it('does nothing before a game starts', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(goBack(result)).toBe(false)
+  })
+
+  it('closes the confirm modal before anything else', () => {
+    const { result } = startFriends()
+    act(() => result.current.setShowLeaderboard(true))
+    act(() => result.current.resetGame())
+
+    expect(goBack(result)).toBe(true)
+    expect(result.current.confirmModal).toBeNull()
+    expect(result.current.showLeaderboard).toBe(true)
+  })
+
+  it('closes the leaderboard and stays on the same screen', () => {
+    const { result } = startFriends()
+    act(() => result.current.setShowLeaderboard(true))
+
+    expect(goBack(result)).toBe(true)
+    expect(result.current.showLeaderboard).toBe(false)
+    expect(result.current.phase).toBe('selecting-category')
+  })
+
+  it('leaves a question, returns it to its pool and keeps the turn', () => {
+    const { result } = startFriends()
+    const poolSize = result.current.categoryQuestions.spark.length
+    act(() => result.current.handleCategorySelect('spark'))
+    const shown = result.current.currentQuestion
+
+    expect(goBack(result)).toBe(true)
+    expect(result.current.phase).toBe('selecting-category')
+    expect(result.current.currentPlayer).toBe(0)
+    expect(result.current.categoryQuestions.spark).toHaveLength(poolSize)
+    expect(result.current.categoryQuestions.spark).toContain(shown)
+  })
+
+  it('returns a question drawn from "all" to the category it came from', () => {
+    const { result } = startFriends()
+    const before = result.current.calculateAvailableCounts()
+    act(() => result.current.handleCategorySelect('all'))
+    const shown = result.current.currentQuestion
+
+    goBack(result)
+
+    expect(result.current.calculateAvailableCounts()).toEqual(before)
+    const owner = Object.values(result.current.categoryQuestions).find((pool) =>
+      pool.includes(shown)
+    )
+    expect(owner).toBeDefined()
+  })
+
+  it('returns a song to the music pool', () => {
+    const { result } = startFriends()
+    act(() => result.current.handleCategorySelect('decadesTape'))
+    const [decade] = Object.keys(result.current.calculateSongsByDecade())
+    const songs = result.current.categoryQuestions.decadesTape.length
+    act(() => result.current.handleDecadeSelect(Number(decade)))
+
+    goBack(result)
+
+    expect(result.current.categoryQuestions.decadesTape).toHaveLength(songs)
+    expect(result.current.selectedDecade).toBeNull()
+  })
+
+  it('steps back from the decade picker to the category pick', () => {
+    const { result } = startFriends()
+    act(() => result.current.handleCategorySelect('decadesTape'))
+
+    expect(goBack(result)).toBe(true)
+    expect(result.current.phase).toBe('selecting-category')
+  })
+
+  it('steps back from the custom picker to the mode picker, then to the category pick', () => {
+    const { result } = startFriends()
+    act(() => result.current.showModeSelector())
+    act(() => result.current.selectMode('custom'))
+
+    goBack(result)
+    expect(result.current.phase).toBe('selecting-mode')
+    goBack(result)
+    expect(result.current.phase).toBe('selecting-category')
+  })
+
+  it('stays on the mode picker when no mode has been chosen yet', () => {
+    localStorage.setItem('gamePlayers', JSON.stringify(FOUR_PLAYERS))
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.phase).toBe('selecting-mode')
+    expect(goBack(result)).toBe(false)
+  })
+
+  it.each([
+    ['the category pick', () => {}],
+    [
+      'the rating panel',
+      (result) => {
+        act(() => result.current.handleCategorySelect('spark'))
+        act(() => result.current.proceedToRating())
+      },
+    ],
+  ])('has nothing to step back to on %s', (_, reach) => {
+    const { result } = startFriends()
+    reach(result)
+    const phase = result.current.phase
+
+    expect(goBack(result)).toBe(false)
+    expect(result.current.phase).toBe(phase)
+  })
+})
+
+describe('useGame — offerExit', () => {
+  beforeEach(() => {
+    clearGameStorage()
+    i18n.changeLanguage('en')
+  })
+
+  it('opens an exit confirm during a game, which back then closes', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+    act(() => result.current.startGame({ players: FOUR_PLAYERS, mode: 'friends' }))
+
+    let opened
+    act(() => {
+      opened = result.current.offerExit()
+    })
+
+    expect(opened).toBe(true)
+    expect(result.current.confirmModal.title).toBe('Leave the game?')
+    act(() => result.current.goBack())
+    expect(result.current.confirmModal).toBeNull()
+  })
+
+  it('does not ask outside a game', () => {
+    const { result } = renderHook(() => useGame(), { wrapper })
+
+    expect(result.current.offerExit()).toBe(false)
+    expect(result.current.confirmModal).toBeNull()
+  })
+})
+
 describe('useGame — storage version migration', () => {
   beforeEach(() => {
     clearGameStorage()
